@@ -1,5 +1,32 @@
 {
   "dependencies": {
-    "fastify": "^5.6.0"
-  }
+    "@fastify/view": "^11.1.1",
+    "fastify": "^5.6.0",
+    "nunjucks": "^3.2.4",
+    "pino": "^9.9.5"
+  },
+  "name": "ttu",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jeffrey-Herly/Platform-Barter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jeffrey-Herly/Platform-Barter/issues"
+  },
+  "homepage": "https://github.com/Jeffrey-Herly/Platform-Barter#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "pino-pretty": "^13.1.1"
+  },
+  "keywords": []
 }
