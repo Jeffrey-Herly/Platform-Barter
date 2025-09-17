@@ -1,13 +1,17 @@
 import app from './lib/fastify.js';
+import registerRoutes from './routes/routes.js';
 
 app.setErrorHandler(function (error, request, reply) {
   // Log error
   this.log.error(error);
 });
 
+await registerRoutes(app);
+
 // root
 app.get('/', async (request, reply) => {
   // Redirect to /index
+  console.log('redirect to /index');
   return reply.redirect('/index');
 });
 
