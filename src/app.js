@@ -1,5 +1,4 @@
 import app from './lib/fastify.js';
-import pino from 'pino';
 
 app.setErrorHandler(function (error, request, reply) {
   // Log error
