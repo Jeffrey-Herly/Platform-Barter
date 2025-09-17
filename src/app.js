@@ -7,7 +7,8 @@ app.setErrorHandler(function (error, request, reply) {
 
 // root
 app.get('/', async (request, reply) => {
-  return { hello: 'hallo' };
+  // Redirect to /index
+  return reply.redirect('/index');
 });
 
 app.route({
