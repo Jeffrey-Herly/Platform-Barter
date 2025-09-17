@@ -48,7 +48,7 @@ app.route({
       console.log({ params: req.params }, 'parameter dikirim');
 
       const { name } = req.params;
-      const message = { messae: `Hello, ${name}!` };
+      const message = { message: `Hello, ${name}!` };
       return reply.send(message);
     } catch (err) {      
       return reply.redirect('/');

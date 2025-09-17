@@ -25,7 +25,67 @@
           { id: 2, name: "Jane Smith", age: 25 },
           { id: 3, name: "Sam Johnson", age: 35 }
         ]}
-      ]
+      ]      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Webix Example</title>
+        <script src="https://cdn.webix.com/edge/webix.js"></script>
+        <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css">
+      </head>
+      <body>
+        <div id="webix-container" style="width:100%; height:100%;"></div>
+        <script>
+          webix.ui({
+            container: "webix-container",
+            rows: [
+              // Toolbar
+              {
+                view: "toolbar",
+                elements: [
+                  { view: "label", label: "Webix Dashboard", align: "center" },
+                  { view: "button", value: "Refresh Data", width: 120, click: function() {
+                      $$("data-table").clearAll();
+                      $$("data-table").parse([
+                        { id: 1, name: "John Doe", age: 30, email: "john@example.com" },
+                        { id: 2, name: "Jane Smith", age: 25, email: "jane@example.com" },
+                        { id: 3, name: "Sam Johnson", age: 35, email: "sam@example.com" }
+                      ]);
+                      webix.message("Data refreshed!");
+                    }
+                  }
+                ]
+              },
+              // Data Table
+              {
+                view: "datatable",
+                id: "data-table",
+                autoConfig: true,
+                columns: [
+                  { id: "id", header: "#", width: 50 },
+                  { id: "name", header: "Name", fillspace: true },
+                  { id: "age", header: "Age", width: 80 },
+                  { id: "email", header: "Email", fillspace: true }
+                ],
+                data: [
+                  { id: 1, name: "John Doe", age: 30, email: "john@example.com" },
+                  { id: 2, name: "Jane Smith", age: 25, email: "jane@example.com" },
+                  { id: 3, name: "Sam Johnson", age: 35, email: "sam@example.com" }
+                ]
+              },
+              // Footer
+              {
+                view: "template",
+                template: "© 2023 Webix Dashboard Example",
+                height: 40,
+                css: { "text-align": "center", "line-height": "40px" }
+              }
+            ]
+          });
+        </script>
+      </body>
+      </html>
     });
   </script>
 </body>

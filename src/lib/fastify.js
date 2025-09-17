@@ -1,4 +1,7 @@
+import fastifyView from '@fastify/view';
 import Fastify from 'fastify';
+import nunjucks from 'nunjucks';
+import { join } from 'path';
 
 const app = Fastify({ 
   logger: {
@@ -10,6 +13,15 @@ const app = Fastify({
       }
     }
   } 
+});
+
+// Gunakan path absolut untuk root views
+app.register(fastifyView, {
+  engine: {
+    nunjucks: nunjucks
+  },
+  root: join(process.cwd(), 'src/views'),
+  layout: false
 });
 
 export default app;
