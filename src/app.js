@@ -1,18 +1,5 @@
-import Fastify, { fastify } from 'fastify';
+import app from './lib/fastify.js';
 import pino from 'pino';
-
-
-const app = Fastify({ 
-  logger: {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
-        colorize: true
-      }
-    }
-  } 
-});
 
 app.setErrorHandler(function (error, request, reply) {
   // Log error
@@ -71,11 +58,11 @@ app.route({
 
 // define server connection
 try {
-  // start server at port 3000
+  // start server at port 2000
   app.listen({ port: 2000 });
 
   // give feedback that server is running
-  app.log.info(`Server are now running at http://localhost:3000/`);
+  app.log.info(`Server are now running at http://localhost:2000/`);
   
 } catch (err) {
     // trow error if server failed to start and exit the process
