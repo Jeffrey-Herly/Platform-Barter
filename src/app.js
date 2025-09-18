@@ -6,12 +6,7 @@ app.setErrorHandler(function (error, request, reply) {
   this.log.error(error);
 });
 
-await app.register(view, {
-  engine: { nunjucks },
-  root: join(__dirname, "src", "views"),
-  viewExt: "njk",
-  options: { noCache: true }   // perubahan .njk terlihat cukup refresh
-});
+
 
 
 await registerRoutes(app);
