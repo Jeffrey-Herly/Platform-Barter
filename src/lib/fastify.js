@@ -14,6 +14,7 @@ const app = Fastify({
     }
   } 
 });
+console.log("berhasil membuat instance fastify");
 
 // Gunakan path absolut untuk root views
 app.register(fastifyView, {
@@ -21,7 +22,12 @@ app.register(fastifyView, {
     nunjucks: nunjucks
   },
   root: join(process.cwd(), 'src/views'),
-  layout: false
+  layout: false,
+  options: {
+    nunjucks: {
+        noCache: true,
+        watch: false
+    }
+  }
 });
-
-export default app;
+console.log("berhasil mendaftarkan view");

@@ -6,58 +6,22 @@ app.setErrorHandler(function (error, request, reply) {
   this.log.error(error);
 });
 
+await app.register(view, {
+  engine: { nunjucks },
+  root: join(__dirname, "src", "views"),
+  viewExt: "njk",
+  options: { noCache: true }   // perubahan .njk terlihat cukup refresh
+});
+
+
 await registerRoutes(app);
+
 
 // root
 app.get('/', async (request, reply) => {
   // Redirect to /index
   console.log('redirect to /index');
   return reply.redirect('/index');
-});
-
-app.route({
-  method: 'GET',
-  url: '/testing/:name', // <-- pakai huruf kecil agar tidak rancu
-  schema: {
-    params: {
-      type: 'object',                 // <-- WAJIBKAN object
-      properties: {
-        name: { type: 'string' }
-      },
-      required: ['name'],
-      additionalProperties: false
-    },
-    response: {
-      200: {
-        type: 'object',               // <-- WAJIBKAN object
-        properties: {
-          message: { type: 'string' }
-        },
-        required: ['message'],
-        additionalProperties: false
-      },
-      500: {
-        type: 'object',
-        properties: {
-          error: { type: 'string' }
-        },
-        required: ['error'],
-        additionalProperties: false
-      }
-    }
-  },
-  handler: (req, reply) => {
-    try {
-      // gunakan logger bawaan Fastify
-      console.log({ params: req.params }, 'parameter dikirim');
-
-      const { name } = req.params;
-      const message = { message: `Hello, ${name}!` };
-      return reply.send(message);
-    } catch (err) {      
-      return reply.redirect('/');
-    }
-  }
 });
 
 // define server connection

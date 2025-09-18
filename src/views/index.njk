@@ -1,91 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Webix Example</title>
+  <meta charset="utf-8" />
+  <title>Test Webix (Hard-coded)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Webix CDN -->
   <script src="https://cdn.webix.com/edge/webix.js"></script>
-  <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css">
+  <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+
+  <style>
+    html, body { height:100%; margin:0; }
+    #webix-container { height:100%; }
+    .footer { text-align:center; line-height:40px; }
+  </style>
 </head>
 <body>
-  <div id="webix-container" style="width:100%; height:100%;"></div>
+  <div id="webix-container"></div>
+
   <script>
-    webix.ui({
-      container: "webix-container",
-      rows: [
-        { view: "toolbar", elements: [
-          { view: "label", label: "Webix Toolbar" },
-          { view: "button", value: "Click Me", width: 100, click: function() {
-              webix.message("Button clicked!");
-            }
-          }
-        ]},
-        { view: "datatable", autoConfig: true, data: [
-          { id: 1, name: "John Doe", age: 30 },
-          { id: 2, name: "Jane Smith", age: 25 },
-          { id: 3, name: "Sam Johnson", age: 35 }
-        ]}
-      ]      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Webix Example</title>
-        <script src="https://cdn.webix.com/edge/webix.js"></script>
-        <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css">
-      </head>
-      <body>
-        <div id="webix-container" style="width:100%; height:100%;"></div>
-        <script>
-          webix.ui({
-            container: "webix-container",
-            rows: [
-              // Toolbar
-              {
-                view: "toolbar",
-                elements: [
-                  { view: "label", label: "Webix Dashboard", align: "center" },
-                  { view: "button", value: "Refresh Data", width: 120, click: function() {
-                      $$("data-table").clearAll();
-                      $$("data-table").parse([
-                        { id: 1, name: "John Doe", age: 30, email: "john@example.com" },
-                        { id: 2, name: "Jane Smith", age: 25, email: "jane@example.com" },
-                        { id: 3, name: "Sam Johnson", age: 35, email: "sam@example.com" }
-                      ]);
-                      webix.message("Data refreshed!");
-                    }
-                  }
-                ]
-              },
-              // Data Table
-              {
-                view: "datatable",
-                id: "data-table",
-                autoConfig: true,
-                columns: [
-                  { id: "id", header: "#", width: 50 },
-                  { id: "name", header: "Name", fillspace: true },
-                  { id: "age", header: "Age", width: 80 },
-                  { id: "email", header: "Email", fillspace: true }
-                ],
-                data: [
-                  { id: 1, name: "John Doe", age: 30, email: "john@example.com" },
-                  { id: 2, name: "Jane Smith", age: 25, email: "jane@example.com" },
-                  { id: 3, name: "Sam Johnson", age: 35, email: "sam@example.com" }
-                ]
-              },
-              // Footer
-              {
-                view: "template",
-                template: "© 2023 Webix Dashboard Example",
-                height: 40,
-                css: { "text-align": "center", "line-height": "40px" }
+    webix.ready(function () {
+      // data hard-coded (bisa langsung diedit di grid, tidak disimpan ke mana-mana)
+      const dataRows = [
+        { id:1, name:"John Doe",  age:30, email:"john@example.com",  role:"Admin" },
+        { id:2, name:"Jane Smith",age:25, email:"jane@example.com",  role:"Editor" },
+        { id:3, name:"Sam Johnson",age:35, email:"sam@example.com",  role:"Viewer" },
+        { id:4, name:"Alice Lee",  age:28, email:"alice@example.com", role:"Editor" }
+      ];
+
+      webix.ui({
+        container: "webix-container",
+        rows: [
+          // Toolbar
+          { view:"toolbar", padding:{ left:8, right:8 }, elements:[
+            { view:"label", label:"Webix Hard-coded Demo" },
+            {},
+            { view:"button", value:"Tambah Baris", width:130, click(){
+                const grid = $$("tbl");
+                grid.add({ id:webix.uid(), name:"(baru)", age:18, email:"-", role:"Viewer" }, 0);
               }
-            ]
-          });
-        </script>
-      </body>
-      </html>
+            },
+            { width:8 },
+            { view:"button", value:"Reset Data", width:120, click(){
+                const grid = $$("tbl");
+                grid.clearAll();
+                grid.parse(dataRows);
+                webix.message("Data di-reset");
+              }
+            }
+          ]},
+
+          // Filter cepat
+          { padding:{ x:8, y:6 }, cols:[
+            { view:"text", id:"q", placeholder:"Cari nama/email…", on:{
+                onTimedKeyPress(){
+                  const v = this.getValue().toLowerCase();
+                  $$("tbl").filter(function(obj){
+                    return obj.name.toLowerCase().includes(v) ||
+                           obj.email.toLowerCase().includes(v);
+                  });
+                }
+              }
+            },
+            { width:8 },
+            { view:"button", value:"Bersihkan Filter", width:150, click(){
+                $$("q").setValue("");
+                $$("tbl").filter(); // hapus filter
+              }
+            }
+          ]},
+
+          // Datatable
+          { view:"datatable", id:"tbl",
+            select:"row",
+            resizeColumn:true,
+            editable:true,
+            editaction:"dblclick",
+            columns:[
+              { id:"id",    header:"#",     width:60, sort:"int" },
+              { id:"name",  header:"Nama",  fillspace:true, editor:"text", sort:"string" },
+              { id:"age",   header:"Usia",  width:80,  editor:"text", sort:"int" },
+              { id:"email", header:"Email", fillspace:true, editor:"text", sort:"string" },
+              { id:"role",  header:"Role",  width:120, editor:"select",
+                options:["Admin","Editor","Viewer"], sort:"string" }
+            ],
+            on:{
+              onBeforeLoad(){ this.showOverlay("Loading…"); },
+              onAfterLoad(){ this.hideOverlay(); }
+            },
+            data: dataRows
+          },
+
+          // Footer
+          { view:"template", template:"© 2025 — Hard-coded Webix Test", height:40, css:"footer" }
+        ]
+      });
     });
   </script>
 </body>
