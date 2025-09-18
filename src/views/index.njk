@@ -20,13 +20,8 @@
 
   <script>
     webix.ready(function () {
-      // data hard-coded (bisa langsung diedit di grid, tidak disimpan ke mana-mana)
-      const dataRows = [
-        { id:1, name:"John Doe",  age:30, email:"john@example.com",  role:"Admin" },
-        { id:2, name:"Jane Smith",age:25, email:"jane@example.com",  role:"Editor" },
-        { id:3, name:"Sam Johnson",age:35, email:"sam@example.com",  role:"Viewer" },
-        { id:4, name:"Alice Lee",  age:28, email:"alice@example.com", role:"Editor" }
-      ];
+      // endpoint server untuk data (hard-coded dari backend)
+      const dataUrl = "/api/users";
 
       webix.ui({
         container: "webix-container",
@@ -44,7 +39,7 @@
             { view:"button", value:"Reset Data", width:120, click(){
                 const grid = $$("tbl");
                 grid.clearAll();
-                grid.parse(dataRows);
+                grid.load(dataUrl);
                 webix.message("Data di-reset");
               }
             }
@@ -88,7 +83,7 @@
               onBeforeLoad(){ this.showOverlay("Loading…"); },
               onAfterLoad(){ this.hideOverlay(); }
             },
-            data: dataRows
+            url: dataUrl
           },
 
           // Footer

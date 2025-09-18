@@ -5,6 +5,17 @@ export default async function routes(app, opts) {
     return reply.view('index.njk', { title: 'Welcome to Index Page' });
   });
 
+  // API: hardcoded data untuk Webix
+  app.get('/api/users', async (req, reply) => {
+    const users = [
+      { id: 1, name: 'John Doe', age: 30, email: 'john@example.com', role: 'Admin' },
+      { id: 2, name: 'Jane Smith', age: 25, email: 'jane@example.com', role: 'Editor' },
+      { id: 3, name: 'Sam Johnson', age: 35, email: 'sam@example.com', role: 'Viewer' },
+      { id: 4, name: 'Alice Lee', age: 28, email: 'alice@example.com', role: 'Editor' }
+    ];
+    return reply.send(users);
+  });
+
   // Route tambahan (contoh)
   app.get('/about', async (req, reply) => {
     return reply.send({ message: 'This is the About page' });
