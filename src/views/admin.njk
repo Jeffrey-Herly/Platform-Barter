@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.webix.com/edge/webix.js"></script>
+  <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+  <style>
+    html, body { height:100%; margin:0; }
+    #app { height:100%; }
+    .footer { text-align:center; line-height:40px; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    webix.ready(function(){
+      webix.ui({
+        container: "app",
+        rows: [
+          { view:"toolbar", padding:{ left:8, right:8 }, elements:[
+            { view:"label", label:"Admin Page" },
+            {},
+            { view:"button", value:"Back to Index", width:150, click(){
+                window.location.href = "/index";
+              }
+            }
+          ]},
+          { view:"template", template:"Welcome to the Admin page.", autoheight:true, css:"webix_dark" },
+          { template:"", minHeight:10, borderless:true },
+          { view:"template", template:"© 2025 — Admin Page", height:40, css:"footer" }
+        ]
+      });
+    });
+  </script>
+</body>
+</html>
+
+
