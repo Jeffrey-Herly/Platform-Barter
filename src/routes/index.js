@@ -5,6 +5,12 @@ export default async function routes(app, opts) {
     return reply.view('index.njk', { title: 'Welcome to Index Page' });
   });
 
+  // Route halaman kedua untuk tes navigasi
+  app.get('/second', async (req, reply) => {
+    console.log('masuk ke second');
+    return reply.view('second.njk', { title: 'Second Page' });
+  });
+
   // API: hardcoded data untuk Webix
   app.get('/api/users', async (req, reply) => {
     const users = [

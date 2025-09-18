@@ -30,6 +30,16 @@
           { view:"toolbar", padding:{ left:8, right:8 }, elements:[
             { view:"label", label:"Webix Hard-coded Demo" },
             {},
+            { view:"button", value:"Go to Second Page", width:170, click(){
+                window.location.href = "/second";
+              }
+            },
+            { width:8 },
+            { view:"button", value:"Go to Admin", width:130, click(){
+                window.location.href = "/admin";
+              }
+            },
+            { width:8 },
             { view:"button", value:"Tambah Baris", width:130, click(){
                 const grid = $$("tbl");
                 grid.add({ id:webix.uid(), name:"(baru)", age:18, email:"-", role:"Viewer" }, 0);
