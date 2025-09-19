@@ -6,9 +6,6 @@ app.setErrorHandler(function (error, request, reply) {
   this.log.error(error);
 });
 
-
-
-
 await registerRoutes(app);
 
 

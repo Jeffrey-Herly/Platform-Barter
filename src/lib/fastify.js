@@ -32,4 +32,6 @@ app.register(fastifyView, {
 });
 console.log("berhasil mendaftarkan view");
 
+
+
 export default app;
