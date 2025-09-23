@@ -4,5 +4,3 @@ export default async function adminRoutes(app, opts) {
     return reply.view('admin.njk', { title: 'Admin Page' });
   });
 }
-
-
