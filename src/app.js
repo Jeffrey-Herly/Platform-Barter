@@ -8,7 +8,6 @@ app.setErrorHandler(function (error, request, reply) {
 
 await registerRoutes(app);
 
-
 // root
 app.get('/', async (request, reply) => {
   // Redirect to /index
@@ -19,7 +18,7 @@ app.get('/', async (request, reply) => {
 // define server connection
 try {
   // start server at port 2000
-  app.listen({ port: 3000 });
+  app.listen({ port: 2000 });
 
   // give feedback that server is running
   app.log.info(`Server are now running at http://localhost:2000/`);
