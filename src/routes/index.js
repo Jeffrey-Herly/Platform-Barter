@@ -1,12 +1,6 @@
 export default async function routes(app, opts) {
   // Route untuk menampilkan tampilan dari views/index.njk
 
-  app.route('/login', async (req, reply) => {
-    console.log('User masuk ke Login Page');
-
-    return reply.view('index.njk', { title: 'Welcome to Login Page' });
-  });
-  
   app.get('/index', async (req, reply) => {
     console.log('berhasil masuk ke index');
     return reply.view('index.njk', { title: 'Welcome to Index Page' });

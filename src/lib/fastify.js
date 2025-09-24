@@ -1,4 +1,5 @@
 import fastifyView from '@fastify/view';
+import fastifyFormbody from '@fastify/formbody';
 import Fastify from 'fastify';
 import nunjucks from 'nunjucks';
 import { join } from 'path';
@@ -16,7 +17,11 @@ const app = Fastify({
 });
 console.log("berhasil membuat instance fastify");
 
-// Gunakan path absolut untuk root views
+// Register form body parser for handling form data and JSON
+app.register(fastifyFormbody);
+console.log("berhasil mendaftarkan form body parser");
+
+// daftarkan direktori view sebagai tempat penyimpanan file template
 app.register(fastifyView, {
   engine: {
     nunjucks: nunjucks

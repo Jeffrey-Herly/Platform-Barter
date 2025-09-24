@@ -12,7 +12,7 @@ await registerRoutes(app);
 app.get('/', async (request, reply) => {
   // Redirect to /index
   console.log('redirect to /index');
-  return reply.redirect('/index');
+  return reply.redirect('/login');
 });
 
 // define server connection
