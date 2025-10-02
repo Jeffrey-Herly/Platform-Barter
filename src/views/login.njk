@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Login - Barter Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Webix CDN -->
+  <script src="https://cdn.webix.com/edge/webix.js"></script>
+  <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+  
+  <style>
+    html, body { 
+      height: 100%; 
+      margin: 0; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      padding: 30px;
+      min-width: 400px;
+    }
+    
+    .title {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 24px;
+      font-weight: 300;
+    }
+    
+    .test-credentials {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6c757d;
+    }
+    
+    .test-credentials h4 {
+      margin: 0 0 10px 0;
+      color: #495057;
+    }
+    
+    .credential {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <h1 class="title">Barter Platform Login</h1>
+      
+      <div id="login-form"></div>
+      
+      <div class="test-credentials">
+        <h4>Test Credentials:</h4>
+        <div class="credential">Admin: admin@barter.com / admin123</div>
+        <div class="credential">User: user@barter.com / user123</div>
+        <div class="credential">John: john@example.com / password123</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    webix.ready(function() {
+      webix.ui({
+        container: "login-form",
+        view: "form",
+        id: "loginForm",
+        width: 400,
+        elements: [
+          { view: "text", name: "email", label: "Email", placeholder: "Enter your email", required: true },
+          { view: "text", name: "password", type: "password", label: "Password", placeholder: "Enter your password", required: true },
+          { 
+            cols: [
+              { view: "button", value: "Login", type: "form", width: 150, click: login },
+              { width: 20 },
+              { view: "button", value: "Back to Home", width: 150, click: function() {
+                  window.location.href = "/index";
+                }
+              }
+            ]
+          }
+        ],
+        rules: {
+          email: webix.rules.isEmail,
+          password: webix.rules.isNotEmpty
+        }
+      });
+
+      function login() {
+        const form = $$("loginForm");
+        
+        if (!form.validate()) {
+          webix.message({ type: "error", text: "Please fill all required fields correctly" });
+          return;
+        }
+
+        const values = form.getValues();
+        
+        // Show loading
+        webix.extend($$("loginForm"), webix.OverlayBox);
+        $$("loginForm").showOverlay("Logging in...");
+
+        // Send login request
+        console.log("Attempting login with:", values);
+        webix.ajax().post("/login", values)
+          .then(function(response) {
+            $$("loginForm").hideOverlay();
+            console.log("test");
+            console.log("Login response:", response.text());
+            
+            //Parse resonse to Json
+            // output example: {"success":true,"user":{"id":1,"name":"Admin User","email":"}}
+            const result = JSON.parse(response.text());
+            
+            if (result.success) {
+              webix.message({ type: "success", text: `Welcome, ${result.user.name}!` });
+              
+              // Store user data (in real app, this would be JWT token)
+              localStorage.setItem('user', JSON.stringify(result.user));
+              
+              // Redirect based on role
+              if (result.user.role === 'admin') {
+                window.location.href = "/admin";
+              } else {
+                window.location.href = "/index";
+              }
+            } else {
+              webix.message({ type: "error", text: result.message });
+            }
+          })
+          .catch(function(error) {
+            $$("loginForm").hideOverlay();
+            webix.message({ type: "error", text: "Login failed. Please try again." });
+            console.error("Login error:", error);
+          });
+      }
+
+      // Auto-fill demo credentials on double-click
+      $$("loginForm").attachEvent("onItemClick", function(id) {
+        if (id === "email") {
+          const email = $$("email");
+          if (email.getValue() === "") {
+            email.setValue("admin@barter.com");
+            $$("password").setValue("admin123");
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+
