@@ -1,5 +1,7 @@
 import app from './lib/fastify.js';
 import registerRoutes from './routes/routes.js';
+import { getPortConfig, isHTTPSEnabled } from '../config/ssl.js';
+import { validateEnvironment } from '../config/environment.js';
 
 app.setErrorHandler(function (error, request, reply) {
   // Log error
@@ -15,16 +17,54 @@ app.get('/', async (request, reply) => {
   return reply.redirect('/login');
 });
 
-// define server connection
-try {
-  // start server at port 2000
-  app.listen({ port: 2000 });
+// Validate environment configuration
+const envValidation = validateEnvironment();
+if (!envValidation.isValid) {
+  console.error('❌ Environment validation failed:');
+  envValidation.errors.forEach(error => console.error(`   - ${error}`));
+  process.exit(1);
+}
 
-  // give feedback that server is running
-  app.log.info(`Server are now running at http://localhost:2000/`);
+// Show warnings if any
+if (envValidation.warnings.length > 0) {
+  console.warn('⚠️  Environment warnings:');
+  envValidation.warnings.forEach(warning => console.warn(`   - ${warning}`));
+}
+
+// Get server configuration
+const httpsEnabled = isHTTPSEnabled();
+const portConfig = getPortConfig(httpsEnabled);
+
+// Add health check endpoint
+app.get('/health', async (request, reply) => {
+  return { 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    protocol: httpsEnabled ? 'https' : 'http',
+    port: portConfig.port
+  };
+});
+
+// Define server connection
+try {
+  // Start server with appropriate configuration
+  await app.listen(portConfig);
+
+  // Give feedback that server is running
+  const protocol = httpsEnabled ? 'https' : 'http';
+  const serverUrl = `${protocol}://${portConfig.host}:${portConfig.port}/`;
+  
+  app.log.info(`🚀 Server is now running at ${serverUrl}`);
+  
+  if (httpsEnabled) {
+    app.log.info('🔒 HTTPS is enabled');
+    app.log.info('🛡️  Security headers are active');
+  } else {
+    app.log.warn('⚠️  Running in HTTP mode - consider enabling HTTPS for production');
+  }
   
 } catch (err) {
-    // trow error if server failed to start and exit the process
-    app.log.error(err);
-    process.exit(1);
+  // Throw error if server failed to start and exit the process
+  app.log.error('❌ Failed to start server:', err);
+  process.exit(1);
 }

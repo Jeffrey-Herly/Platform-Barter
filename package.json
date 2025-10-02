@@ -3,6 +3,7 @@
     "@fastify/formbody": "^8.0.2",
     "@fastify/postgres": "^6.0.2",
     "@fastify/view": "^11.1.1",
+    "dotenv": "^16.6.1",
     "fastify": "^5.6.1",
     "nunjucks": "^3.2.4",
     "pg": "^8.16.3",
@@ -15,7 +16,13 @@
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "dev:https": "ENABLE_HTTPS=true nodemon src/app.js",
+    "generate-ssl": "node scripts/generate-ssl-cert.js",
+    "generate-ssl:bash": "./scripts/generate-ssl-cert.sh",
+    "setup:https": "npm run generate-ssl && echo 'SSL certificates generated. Set ENABLE_HTTPS=true in .env to use HTTPS'",
+    "test:http": "curl -i http://localhost:2000/health",
+    "test:https": "curl -i -k https://localhost:2443/health"
   },
   "repository": {
     "type": "git",
