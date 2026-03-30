@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Test Webix (Hard-coded)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Webix CDN -->
+  <script src="https://cdn.webix.com/edge/webix.js"></script>
+  <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" />
+
+  <style>
+    html, body { height:100%; margin:0; }
+    #webix-container { height:100%; }
+    .footer { text-align:center; line-height:40px; }
+  </style>
+</head>
+<body>
+  <div id="webix-container"></div>
+
+  <script>
+    webix.ready(function () {
+      // endpoint server untuk data (hard-coded dari backend)
+      const dataUrl = "/api/users";
+
+      webix.ui({
+        container: "webix-container",
+        rows: [
+          // Toolbar
+          { view:"toolbar", padding:{ left:8, right:8 }, elements:[
+            { view:"label", label:"Webix Hard-coded Demo" },
+            {},
+            { view:"button", value:"Go to Second Page", width:170, click(){
+                window.location.href = "/second";
+              }
+            },
+            { width:8 },
+            { view:"button", value:"Go to Admin", width:130, click(){
+                window.location.href = "/admin";
+              }
+            },
+            { width:8 },
+            { view:"button", value:"Tambah Baris", width:130, click(){
+                const grid = $$("tbl");
+                grid.add({ id:webix.uid(), name:"(baru)", age:18, email:"-", role:"Viewer" }, 0);
+              }
+            },
+            { width:8 },
+            { view:"button", value:"Reset Data", width:120, click(){
+                const grid = $$("tbl");
+                grid.clearAll();
+                grid.load(dataUrl);
+                webix.message("Data di-reset");
+              }
+            }
+          ]},
+
+          // Filter cepat
+          { padding:{ x:8, y:6 }, cols:[
+            { view:"text", id:"q", placeholder:"Cari nama/email…", on:{
+                onTimedKeyPress(){
+                  const v = this.getValue().toLowerCase();
+                  $$("tbl").filter(function(obj){
+                    return obj.name.toLowerCase().includes(v) ||
+                           obj.email.toLowerCase().includes(v);
+                  });
+                }
+              }
+            },
+            { width:8 },
+            { view:"button", value:"Bersihkan Filter", width:150, click(){
+                $$("q").setValue("");
+                $$("tbl").filter(); // hapus filter
+              }
+            }
+          ]},
+
+          // Datatable
+          { view:"datatable", id:"tbl",
+            select:"row",
+            resizeColumn:true,
+            editable:true,
+            editaction:"dblclick",
+            columns:[
+              { id:"id",    header:"#",     width:60, sort:"int" },
+              { id:"name",  header:"Nama",  fillspace:true, editor:"text", sort:"string" },
+              { id:"age",   header:"Usia",  width:80,  editor:"text", sort:"int" },
+              { id:"email", header:"Email", fillspace:true, editor:"text", sort:"string" },
+              { id:"role",  header:"Role",  width:120, editor:"select",
+                options:["Admin","Editor","Viewer"], sort:"string" }
+            ],
+            on:{
+              onBeforeLoad(){ this.showOverlay("Loading…"); },
+              onAfterLoad(){ this.hideOverlay(); }
+            },
+            url: dataUrl
+          },
+
+          // Footer
+          { view:"template", template:"© 2025 — Hard-coded Webix Test", height:40, css:"footer" }
+        ]
+      });
+    });
+  </script>
+</body>
+</html>
