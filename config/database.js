@@ -1,0 +1,10 @@
+DB_HOST = localhost // change this when the apps ready to production
+DB_USER = root
+DB_PASSWORD = "Jeffrey@9010"
+DB_NAME = mydatabase
+DB_PORT = 5432
+DB_DIALECT = mysql
+DB_POOL_MAX = 5
+DB_POOL_MIN = 0
+DB_POOL_ACQUIRE = 30000
+DB_POOL_IDLE = 10000
