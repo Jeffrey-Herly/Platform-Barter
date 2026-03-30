@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Negosiasi Barter - Barterin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .chat-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chat-header-subtitle {
+            margin: 0.25rem 0 0;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message-wrapper {
+            display: flex;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .chat-message-wrapper.chat-bubble-own {
+            justify-content: flex-end;
+        }
+
+        .chat-message-wrapper.chat-bubble-other {
+            justify-content: flex-start;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            word-wrap: break-word;
+        }
+
+        .chat-bubble-own {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-bubble-other {
+            background: #e9ecef;
+            color: #333;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-bubble p {
+            margin: 0;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .chat-bubble small {
+            font-size: 0.75rem;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #e9ecef;
+            border-radius: 1rem;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                opacity: 0.5;
+                transform: translateY(0);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-input-area {
+            border-top: 1px solid #e9ecef;
+            padding: 1rem;
+            background: white;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+
+        .chat-input-group input,
+        .chat-input-group textarea {
+            flex: 1;
+            border: 1px solid #ced4da;
+            border-radius: 0.5rem;
+            padding: 0.625rem;
+            font-family: inherit;
+            resize: none;
+            max-height: 120px;
+        }
+
+        .chat-input-group input:focus,
+        .chat-input-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .chat-input-group button {
+            padding: 0.625rem 1rem;
+            height: auto;
+        }
+
+        .user-profile-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-right: 1rem;
+        }
+
+        .user-profile-card img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .user-profile-info h6 {
+            margin: 0;
+            font-size: 0.875rem;
+        }
+
+        .user-profile-info p {
+            margin: 0;
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .unread-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-bubble {
+                max-width: 85%;
+            }
+
+            .user-profile-card {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-right: 0;
+            }
+
+            .chat-header-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <!-- Header -->
+    <div class="chat-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="chat-header-title">
+                <i class="fas fa-comments"></i> Chat Negosiasi
+            </h4>
+            <p class="chat-header-subtitle">
+                <span class="status-indicator"></span>Partner sedang <span id="partner-status">offline</span>
+            </p>
+        </div>
+        <div class="user-profile-card" id="partner-profile">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be loaded here -->
+        <div class="text-center text-muted pt-5">
+            <p><i class="fas fa-circle-notch fa-spin"></i> Loading chat history...</p>
+        </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="ps-3 d-none" id="typing-indicator">
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+        <form id="message-form" class="chat-input-group">
+            <textarea
+                id="message-input"
+                placeholder="Ketik pesan Anda..."
+                rows="1"
+                required></textarea>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Kirim
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="emoji-btn" title="Emoji">
+                <i class="fas fa-smile"></i>
+            </button>
+        </form>
+        <small class="text-muted d-block mt-2">
+            Tekan <kbd>Shift</kbd> + <kbd>Enter</kbd> untuk baris baru
+        </small>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="/js/chat-polling.js"></script>
+
+<script>
+    // Configuration
+    const config = {
+        transactionId: '<%= transactionId %>',
+        userId: '<%= userId %>',
+        partnerName: '<%= partnerName %>',
+        partnerAvatar: '<%= partnerAvatar || "/images/default-avatar.png" %>',
+        partnerEmail: '<%= partnerEmail %>'
+    };
+
+    // Initialize chat poller
+    let chatPoller = new ChatPoller({
+        transactionId: config.transactionId,
+        userId: config.userId,
+        messageContainer: '#chat-messages',
+        pollInterval: 3000,
+        onNewMessage: handleNewMessages
+    });
+
+    // Initialize UI
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Load initial chat history
+        await loadChatHistory();
+
+        // Setup event listeners
+        setupEventListeners();
+
+        // Start polling
+        chatPoller.start();
+
+        // Load partner profile
+        loadPartnerProfile();
+
+        // Handle textarea auto-resize
+        const textarea = document.getElementById('message-input');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Handle Shift+Enter for new line
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('message-form').dispatchEvent(new Event('submit'));
+            }
+        });
+    });
+
+    /**
+     * Load chat history
+     */
+    async function loadChatHistory(page = 1) {
+        try {
+            const response = await fetch(
+                `/api/barter-messages/${config.transactionId}?page=${page}&limit=50`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                }
+            );
+
+            if (!response.ok) throw new Error('Failed to load chat history');
+
+            const data = await response.json();
+            const container = document.getElementById('chat-messages');
+
+            if (data.success) {
+                container.innerHTML = '';
+
+                data.data.messages.forEach(msg => {
+                    const isOwn = msg.is_own;
+                    const messageHtml = createMessageElement(msg, isOwn);
+                    container.insertAdjacentHTML('beforeend', messageHtml);
+                });
+
+                // Scroll to bottom
+                container.scrollTop = container.scrollHeight;
+
+                // Mark as read
+                await chatPoller.markAllAsRead();
+            }
+        } catch (error) {
+            console.error('Error loading chat history:', error);
+            showError('Gagal memuat riwayat chat');
+        }
+    }
+
+    /**
+     * Create message element
+     */
+    function createMessageElement(message, isOwn) {
+        const timeString = new Date(message.created_at).toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const bubbleClass = isOwn ? 'chat-bubble-own' : 'chat-bubble-other';
+        const avatarClass = isOwn ? 'd-none' : 'd-inline-block';
+
+        return `
+            <div class="chat-message-wrapper ${bubbleClass} mb-2">
+                <div class="d-flex ${isOwn ? 'flex-row-reverse' : 'flex-row'} align-items-end gap-2">
+                    ${!isOwn ? `
+                        <img src="${message.sender_avatar || '/images/default-avatar.png'}"
+                             alt="${message.sender_name}"
+                             class="rounded-circle ${avatarClass}"
+                             width="36" height="36"
+                             title="${message.sender_name}">
+                    ` : ''}
+                    <div class="chat-bubble ${bubbleClass}">
+                        <p class="mb-1">${escapeHtml(message.message_text)}</p>
+                        <small>${timeString}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Setup event listeners
+     */
+    function setupEventListeners() {
+        document.getElementById('message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('message-input');
+            const messageText = input.value.trim();
+
+            if (!messageText) return;
+
+            try {
+                const response = await fetch('/api/barter-messages/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        transaction_id: config.transactionId,
+                        message_text: messageText
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to send message');
+
+                const data = await response.json();
+
+                if (data.success) {
+                    input.value = '';
+                    input.style.height = 'auto';
+                    input.focus();
+
+                    // Message will appear via polling
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showError('Gagal mengirim pesan');
+            }
+        });
+    }
+
+    /**
+     * Handle new messages from polling
+     */
+    function handleNewMessages(messages) {
+        // Messages are already added to DOM by ChatPoller
+        console.log(`Received ${messages.length} new message(s)`);
+    }
+
+    /**
+     * Load partner profile
+     */
+    async function loadPartnerProfile() {
+        const profileCard = document.getElementById('partner-profile');
+        profileCard.innerHTML = `
+            <img src="${config.partnerAvatar}" alt="${config.partnerName}" class="rounded-circle" width="40" height="40">
+            <div class="user-profile-info">
+                <h6>${config.partnerName}</h6>
+                <p>${config.partnerEmail}</p>
+            </div>
+        `;
+    }
+
+    /**
+     * Utility functions
+     */
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function getAuthToken() {
+        return localStorage.getItem('authToken') ||
+               sessionStorage.getItem('authToken') ||
+               document.cookie.split(';').find(c => c.includes('token'))?.split('=')[1] ||
+               '';
+    }
+
+    function showError(message) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alert.style.zIndex = '9999';
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alert);
+
+        setTimeout(() => alert.remove(), 5000);
+    }
+</script>
+</body>
+</html>

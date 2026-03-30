@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item - Barterin</title>
+    <link rel="stylesheet" href="/public/webix/webix.min.css">
+    <link rel="stylesheet" href="/public/webix/skins/material.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+    
+    <!-- Tag Manager CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/tag-manager.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            color: #999;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        label .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .checkbox-item label {
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            margin-left: auto;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+        }
+
+        .alert-info {
+            background: #eef;
+            border: 1px solid #ccf;
+            color: #33c;
+        }
+
+        .current-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+
+        .image-item:active {
+            cursor: grabbing;
+        }
+
+        .image-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .image-item.drag-over {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+            transform: scale(1.05);
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .image-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .image-delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            padding: 0;
+            z-index: 10;
+        }
+
+        .image-item:hover .image-delete-btn {
+            opacity: 1;
+        }
+
+        .image-delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .btn-danger {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Edit Item</h1>
+            <p>Perbarui informasi item Anda</p>
+            <div class="breadcrumb">
+                <a href="/dashboard/">Dashboard</a> /
+                <a href="/dashboard/items">Items</a> /
+                <span>Edit Item</span>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <% if (error) { %>
+            <div class="alert alert-error">
+                <strong>Error!</strong> <%= error %>
+            </div>
+        <% } %>
+
+        <% if (message) { %>
+            <div class="alert alert-success">
+                <strong>Berhasil!</strong> <%= message %>
+            </div>
+        <% } %>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <form id="editItemForm" method="POST" action="/api/items/<%= itemData ? itemData.id : '' %>?redirect=/dashboard/items" enctype="multipart/form-data">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <div class="section-title">Informasi Dasar</div>
+
+                    <div class="form-group">
+                        <label for="title">
+                            Judul Item <span class="required">*</span>
+                        </label>
+                        <input type="text" id="title" name="title" required placeholder="Contoh: Laptop Acer Aspire 5" maxlength="255" value="<%= itemData ? itemData.title : '' %>">
+                        <div class="form-hint">Judul yang menarik akan mendapatkan lebih banyak perhatian</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">
+                            Deskripsi <span class="required">*</span>
+                        </label>
+                        <textarea id="description" name="description" required placeholder="Jelaskan detail tentang item Anda"><%= itemData ? itemData.description : '' %></textarea>
+                        <div class="form-hint">Semakin detail, semakin banyak pembeli yang tertarik</div>
+                    </div>
+                </div>
+
+                <!-- Category & Type -->
+                <div class="form-section">
+                    <div class="section-title">Kategori & Jenis</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoryId">
+                                Kategori <span class="required">*</span>
+                            </label>
+                            <select id="categoryId" name="categoryId" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <% if (formData && formData.categories) { %>
+                                    <% formData.categories.forEach(cat => { %>
+                                        <% if (!cat.parent) { %>
+                                            <option value="<%= cat.id %>" <%= itemData && itemData.category && itemData.category.id === cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                                        <% } %>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="typeId">
+                                Jenis Item <span class="required">*</span>
+                            </label>
+                            <select id="typeId" name="typeId" required>
+                                <option value="">-- Pilih Jenis --</option>
+                                <% if (formData && formData.types) { %>
+                                    <% formData.types.forEach(type => { %>
+                                        <option value="<%= type.id %>" <%= itemData && itemData.type && itemData.type.id === type.id ? 'selected' : '' %>><%= type.name %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="conditionId">Kondisi Item</label>
+                            <select id="conditionId" name="conditionId">
+                                <option value="">-- Pilih Kondisi --</option>
+                                <% if (formData && formData.conditions) { %>
+                                    <% formData.conditions.forEach(cond => { %>
+                                        <option value="<%= cond.id %>" <%= itemData && itemData.condition && itemData.condition.id === cond.id ? 'selected' : '' %>><%= cond.name %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estimatedValue">Perkiraan Nilai (Rp)</label>
+                            <input type="number" id="estimatedValue" name="estimatedValue" placeholder="0" min="0" step="1000" value="<%= itemData && itemData.estimatedValue ? itemData.estimatedValue : '' %>">
+                            <div class="form-hint">Opsional: membantu pembeli mengevaluasi penawaran</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="form-section">
+                    <div class="section-title">Status Item</div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isAvailable" name="isAvailable" value="true" <%= itemData && itemData.isAvailable ? 'checked' : '' %>>
+                            Item Tersedia untuk Ditukar
+                        </label>
+                        <div class="form-hint">Nonaktifkan jika item sudah tidak tersedia</div>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="form-section">
+                    <div class="section-title">Tag (Opsional)</div>
+
+                    <div id="tag-container" class="tag-container">
+                        <div class="tag-input-group">
+                            <input 
+                                type="text" 
+                                id="tag-input" 
+                                class="tag-input"
+                                placeholder="Ketik atau buat tag baru (mis: elektronik, buku, fashion)"
+                                autocomplete="off"
+                            >
+                            <button type="button" id="tag-add-btn" class="tag-add-btn">+ Tambah</button>
+                        </div>
+                        <div class="tags-list" id="tags-list"></div>
+                        <input type="hidden" name="tags" id="tags" value="[]">
+                        <div class="tag-help-text">
+                            💡 <strong>Tip:</strong> Tag membantu pembeli menemukan item Anda. 
+                            Anda dapat membuat tag personal atau menggunakan tag yang sudah ada.
+                        </div>
+                    </div>
+                    
+                    <!-- Store existing tags as JSON for tag manager to load -->
+                    <% if (itemData && itemData.tags) { %>
+                        <input type="hidden" id="existing-tags-data" data-existing-tags='<%= JSON.stringify(itemData.tags) %>'>
+                    <% } %>
+                </div>
+
+                <!-- Current Images -->
+                <% if (itemData && itemData.images && itemData.images.length > 0) { %>
+                    <div class="form-section">
+                        <div class="section-title">Foto Saat Ini</div>
+                        <div class="current-images" id="images-container">
+                            <% itemData.images.forEach(img => { %>
+                                <div class="image-item" id="image-<%= img.id %>" data-image-id="<%= img.id %>" draggable="true">
+                                    <img src="<%= img.url %>" alt="Item image">
+                                    <% if (img.isPrimary) { %>
+                                        <div class="image-badge">Utama</div>
+                                    <% } %>
+                                    <button type="button" class="image-delete-btn" onclick="deleteImage('<%= img.id %>', event)">
+                                        <span>✕</span>
+                                    </button>
+                                </div>
+                            <% }); %>
+                        </div>
+                        <div class="form-hint" style="margin-top: 10px;">💡 Tip: Geser gambar untuk mengatur urutan. Gambar paling kiri akan menjadi gambar utama.</div>
+                    </div>
+                <% } %>
+
+                <!-- New Images -->
+                <div class="form-section">
+                    <div class="section-title">Tambah/Ganti Foto (Opsional)</div>
+
+                    <div class="form-group">
+                        <label for="images">Upload Foto</label>
+                        <input type="file" id="images" name="images" multiple accept="image/*">
+                        <div class="form-hint">Unggah hingga 5 foto (maksimal 2MB per foto).</div>
+                    </div>
+
+                    <div id="imagePreview"></div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="button-text">Simpan Perubahan</span>
+                        <span class="spinner" style="display: none;"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="deleteItem('<%= itemData ? itemData.id : '' %>')">Hapus Item</button>
+                </div>
+            </form>
+
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <p>Memproses...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+    <script src="/js/tag-manager.js"></script>
+    <script>
+        // Initialize Tag Manager
+        let tagManager;
+        document.addEventListener('DOMContentLoaded', function() {
+            tagManager = new TagManager({
+                containerSelector: '#tag-container',
+                inputSelector: '#tag-input',
+                addButtonSelector: '#tag-add-btn',
+                tagsListSelector: '#tags-list',
+                hiddenInputSelector: '#tags'
+            });
+            console.log('[Edit Item] TagManager initialized');
+        });
+
+        // Form handling
+        const form = document.getElementById('editItemForm');
+        const loadingState = document.getElementById('loadingState');
+        const imageInput = document.getElementById('images');
+        const imagePreview = document.getElementById('imagePreview');
+        const isAvailableCheckbox = document.getElementById('isAvailable');
+        const currentItemId = '<%= itemData ? itemData.id : '' %>';
+
+        // Validation helper for images
+        function validateImageFile(file) {
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+            if (file.size > maxSize) {
+                throw new Error(`${file.name}: Ukuran melebihi 2MB (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+            }
+
+            if (!allowedTypes.includes(file.type)) {
+                throw new Error(`${file.name}: Format tidak didukung (${file.type || 'Unknown'})`);
+            }
+
+            const filename = file.name.toLowerCase();
+            const hasValidExtension = allowedExtensions.some(ext => filename.endsWith(ext));
+            if (!hasValidExtension) {
+                throw new Error(`${file.name}: Ekstensi tidak valid`);
+            }
+        }
+
+        // Image preview with validation
+        if (imageInput) {
+            imageInput.addEventListener('change', function (e) {
+                imagePreview.innerHTML = '';
+                let validFiles = [];
+                let invalidFiles = [];
+                const files = Array.from(e.target.files);
+
+                // Validate each file
+                files.forEach((file) => {
+                    try {
+                        validateImageFile(file);
+                        validFiles.push(file);
+                    } catch (error) {
+                        invalidFiles.push(error.message);
+                    }
+                });
+
+                // Show invalid file messages
+                if (invalidFiles.length > 0) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'margin-top: 15px; padding: 12px; background: #fee; border: 1px solid #fcc; border-radius: 6px; color: #c33;';
+                    errorDiv.innerHTML = '<strong>⚠️ File tidak valid:</strong><br>' + invalidFiles.join('<br>');
+                    imagePreview.appendChild(errorDiv);
+                }
+
+                // Display valid files only (max 5)
+                validFiles = validFiles.slice(0, 5);
+                if (validFiles.length > 0) {
+                    const previewTitle = document.createElement('div');
+                    previewTitle.style.cssText = 'margin-top: 20px; margin-bottom: 15px; font-weight: 600; color: #333;';
+                    previewTitle.textContent = `✅ ${validFiles.length} foto siap diunggah${invalidFiles.length > 0 ? ' (file tidak valid diabaikan)' : ''}`;
+                    imagePreview.appendChild(previewTitle);
+
+                    validFiles.forEach((file, index) => {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const preview = document.createElement('div');
+                            preview.style.cssText = 'display: inline-block; position: relative; margin-right: 10px; margin-bottom: 10px;';
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.cssText = 'width: 100px; height: 100px; border-radius: 6px; border: 1px solid #ddd;';
+
+                            const badge = document.createElement('div');
+                            badge.style.cssText = 'position: absolute; top: -5px; left: -5px; background: #667eea; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;';
+                            badge.textContent = index + 1;
+
+                            preview.appendChild(img);
+                            preview.appendChild(badge);
+                            imagePreview.appendChild(preview);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                // Reset file input if all files invalid
+                if (invalidFiles.length > 0 && validFiles.length === 0) {
+                    imageInput.value = '';
+                }
+            });
+        }
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            loadingState.classList.add('active');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            // Add isAvailable as boolean
+            formData.set('isAvailable', isAvailableCheckbox.checked);
+
+            try {
+                if (!currentItemId) {
+                    alert('Item tidak ditemukan. Tidak dapat menyimpan perubahan.');
+                    loadingState.classList.remove('active');
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                const response = await fetch('/api/items/' + currentItemId, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect ke items page dengan success message
+                    window.location.href = '/dashboard/items?success=Item berhasil diperbarui';
+                } else {
+                    alert('Error: ' + data.message);
+                    loadingState.classList.remove('active');
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan: ' + error.message);
+                loadingState.classList.remove('active');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Drag and drop functionality for images
+        let draggedElement = null;
+
+        const imagesContainer = document.getElementById('images-container');
+        if (imagesContainer) {
+            const imageItems = imagesContainer.querySelectorAll('.image-item');
+
+            imageItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                item.addEventListener('dragend', function(e) {
+                    this.classList.remove('dragging');
+                    imageItems.forEach(img => img.classList.remove('drag-over'));
+                });
+
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (this !== draggedElement) {
+                        this.classList.add('drag-over');
+                    }
+                });
+
+                item.addEventListener('dragleave', function(e) {
+                    this.classList.remove('drag-over');
+                });
+
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    if (this !== draggedElement) {
+                        // Swap elements
+                        const allItems = Array.from(imagesContainer.children);
+                        const draggedIndex = allItems.indexOf(draggedElement);
+                        const targetIndex = allItems.indexOf(this);
+
+                        if (draggedIndex < targetIndex) {
+                            this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                        } else {
+                            this.parentNode.insertBefore(draggedElement, this);
+                        }
+
+                        updateImageOrder();
+                    }
+                    this.classList.remove('drag-over');
+                });
+            });
+        }
+
+        // Update image order and set primary image
+        function updateImageOrder() {
+            const imagesContainer = document.getElementById('images-container');
+            const imageItems = imagesContainer.querySelectorAll('.image-item');
+            const imageIds = [];
+
+            imageItems.forEach((item, index) => {
+                imageIds.push(item.getAttribute('data-image-id'));
+
+                // First image becomes primary
+                const badge = item.querySelector('.image-badge');
+                if (index === 0) {
+                    if (!badge) {
+                        const newBadge = document.createElement('div');
+                        newBadge.className = 'image-badge';
+                        newBadge.textContent = 'Utama';
+                        item.appendChild(newBadge);
+                    }
+                } else {
+                    if (badge) {
+                        badge.remove();
+                    }
+                }
+            });
+
+            // Send updated order to server
+            fetch('/api/items/images/reorder', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    imageIds: imageIds
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to update image order:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating image order:', error);
+            });
+        }
+
+        // Delete image function
+        function deleteImage(imageId, event) {
+            event.preventDefault();
+
+            if (confirm('Apakah Anda yakin ingin menghapus gambar ini?')) {
+                const imageElement = document.getElementById('image-' + imageId);
+
+                fetch('/api/items/images/' + imageId, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove image element with animation
+                        imageElement.style.opacity = '0';
+                        imageElement.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            imageElement.remove();
+                            // Update image order after delete
+                            updateImageOrder();
+                        }, 300);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus gambar: ' + error.message);
+                });
+            }
+        }
+
+        // Delete item function
+        function deleteItem(itemId) {
+            if (confirm('Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.')) {
+                const loadingState = document.getElementById('loadingState');
+                loadingState.classList.add('active');
+
+                fetch('/api/items/' + itemId, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/dashboard/items?success=Item berhasil dihapus';
+                    } else {
+                        alert('Error: ' + data.message);
+                        loadingState.classList.remove('active');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan: ' + error.message);
+                    loadingState.classList.remove('active');
+                });
+            }
+        }
+
+        // Initialize Webix
+        webix.ready(function() {
+            // Any webix initialization here if needed
+        });
+    </script>
+</body>
+</html>

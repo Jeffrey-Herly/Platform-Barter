@@ -1,0 +1,21 @@
+{
+    "name": "webix",
+    "version": "11.2.0",
+    "description": "Webix UI",
+    "main": "webix.js",
+    "types": "types/webix.d.ts",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+      "webix",
+      "ui",
+      "js", 
+      "javascript", 
+      "ui library",
+      "tree", "datatable", "list", "chart", "form", "grid"
+    ],
+    "author": "XB Software",
+    "license": "SEE LICENSE IN license.text"
+  }
+  

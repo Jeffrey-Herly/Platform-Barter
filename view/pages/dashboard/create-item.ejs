@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Item Baru - Barterin</title>
+    <link rel="stylesheet" href="/public/webix/webix.min.css">
+    <link rel="stylesheet" href="/public/webix/skins/material.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+    
+    <!-- Tag Manager CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/tag-manager.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            color: #999;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        label .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .checkbox-item label {
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+        }
+
+        .alert-info {
+            background: #eef;
+            border: 1px solid #ccf;
+            color: #33c;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Tambah Item Baru</h1>
+            <p>Bagikan barang atau jasa Anda untuk ditukar dengan yang Anda inginkan</p>
+            <div class="breadcrumb">
+                <a href="/dashboard/">Dashboard</a> /
+                <a href="/dashboard/items">Items</a> /
+                <span>Tambah Item</span>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <% if (error) { %>
+            <div class="alert alert-error">
+                <strong>Error!</strong> <%= error %>
+            </div>
+        <% } %>
+
+        <% if (message) { %>
+            <div class="alert alert-success">
+                <strong>Berhasil!</strong> <%= message %>
+            </div>
+        <% } %>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <form id="createItemForm" method="POST" action="/api/items" enctype="multipart/form-data">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <div class="section-title">Informasi Dasar</div>
+
+                    <div class="form-group">
+                        <label for="title">
+                            Judul Item <span class="required">*</span>
+                        </label>
+                        <input type="text" id="title" name="title" required placeholder="Contoh: Laptop Acer Aspire 5" maxlength="255">
+                        <div class="form-hint">Judul yang menarik akan mendapatkan lebih banyak perhatian</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">
+                            Deskripsi <span class="required">*</span>
+                        </label>
+                        <textarea id="description" name="description" required placeholder="Jelaskan detail tentang item Anda: kondisi, spesifikasi, riwayat penggunaan, dll"></textarea>
+                        <div class="form-hint">Semakin detail, semakin banyak pembeli yang tertarik</div>
+                    </div>
+                </div>
+
+                <!-- Category & Type -->
+                <div class="form-section">
+                    <div class="section-title">Kategori & Jenis</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoryId">
+                                Kategori <span class="required">*</span>
+                            </label>
+                            <select id="categoryId" name="categoryId" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <% if (formData && formData.categories) { %>
+                                    <% formData.categories.forEach(cat => { %>
+                                        <% if (!cat.parent) { %>
+                                            <option value="<%= cat.id %>"><%= cat.name %></option>
+                                        <% } %>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="typeId">
+                                Jenis Item <span class="required">*</span>
+                            </label>
+                            <select id="typeId" name="typeId" required>
+                                <option value="">-- Pilih Jenis --</option>
+                                <% if (formData && formData.types) { %>
+                                    <% formData.types.forEach(type => { %>
+                                        <option value="<%= type.id %>"><%= type.name %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="conditionId" id="conditionLabel">Kondisi</label>
+                            <select id="conditionId" name="conditionId">
+                                <option value="">-- Pilih Kondisi --</option>
+                                <% if (formData && formData.conditions) { %>
+                                    <% formData.conditions.forEach(cond => { %>
+                                        <option value="<%= cond.id %>" data-type="barang"><%= cond.name %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                            <!-- Hidden field for skill level (used when type is JASA) -->
+                            <input type="hidden" id="skillLevelId" name="skillLevelId" value="">
+                            <div class="form-hint" id="conditionHint">Pilih kondisi barang Anda</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estimatedValue">Perkiraan Nilai (Rp)</label>
+                            <input type="number" id="estimatedValue" name="estimatedValue" placeholder="0" min="0" step="1000">
+                            <div class="form-hint">Opsional: membantu pembeli mengevaluasi penawaran</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="form-section">
+                    <div class="section-title">Tag (Opsional)</div>
+
+                    <div id="tag-container" class="tag-container">
+                        <div class="tag-input-group">
+                            <input 
+                                type="text" 
+                                id="tag-input" 
+                                class="tag-input"
+                                placeholder="Ketik atau buat tag baru (mis: elektronik, buku, fashion)"
+                                autocomplete="off"
+                            >
+                            <button type="button" id="tag-add-btn" class="tag-add-btn">+ Tambah</button>
+                        </div>
+                        <div class="tags-list" id="tags-list"></div>
+                        <input type="hidden" name="tags" id="tags" value="[]">
+                        <div class="tag-help-text">
+                            💡 <strong>Tip:</strong> Tag membantu pembeli menemukan item Anda. 
+                            Anda dapat membuat tag personal atau menggunakan tag yang sudah ada.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images -->
+                <div class="form-section">
+                    <div class="section-title">Foto Item (Opsional)</div>
+
+                    <div class="form-group">
+                        <label for="images">Upload Foto</label>
+                        <input type="file" id="images" name="images" multiple accept="image/*">
+                        <div class="form-hint">Unggah hingga 5 foto (maksimal 2MB per foto). Foto pertama akan menjadi foto utama.</div>
+                    </div>
+
+                    <div id="imagePreview"></div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="button-text">Simpan Item</span>
+                        <span class="spinner" style="display: none;"></span>
+                    </button>
+                    <a href="/dashboard/items" class="btn btn-secondary">Batal</a>
+                </div>
+            </form>
+
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <p>Memproses...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+    <script src="/js/tag-manager.js"></script>
+    <script>
+        // Initialize Tag Manager
+        let tagManager;
+        document.addEventListener('DOMContentLoaded', function() {
+            tagManager = new TagManager({
+                containerSelector: '#tag-container',
+                inputSelector: '#tag-input',
+                addButtonSelector: '#tag-add-btn',
+                tagsListSelector: '#tags-list',
+                hiddenInputSelector: '#tags'
+            });
+            console.log('[Create Item] TagManager initialized');
+        });
+
+        // Form handling
+        const form = document.getElementById('createItemForm');
+        const loadingState = document.getElementById('loadingState');
+        const imageInput = document.getElementById('images');
+        const imagePreview = document.getElementById('imagePreview');
+
+        // Dynamic condition/skill level dropdown
+        const typeSelect = document.getElementById('typeId');
+        const conditionSelect = document.getElementById('conditionId');
+        const conditionLabel = document.getElementById('conditionLabel');
+        const conditionHint = document.getElementById('conditionHint');
+
+        // Store original condition options
+        const conditionOptions = {
+            barang: [
+                <% if (formData && formData.conditions) { %>
+                    <% formData.conditions.forEach((cond, index) => { %>
+                        { id: '<%= cond.id %>', name: '<%= cond.name %>' }<%= index < formData.conditions.length - 1 ? ',' : '' %>
+                    <% }); %>
+                <% } %>
+            ],
+            jasa: [
+                { id: 'beginner', name: 'Pemula (Beginner)' },
+                { id: 'intermediate', name: 'Menengah (Intermediate)' },
+                { id: 'advanced', name: 'Mahir (Advanced)' },
+                { id: 'expert', name: 'Ahli (Expert)' }
+            ]
+        };
+
+        const skillLevelIdInput = document.getElementById('skillLevelId');
+        let isServiceType = false;
+
+        // Update dropdown based on item type
+        typeSelect.addEventListener('change', function() {
+            const selectedType = this.options[this.selectedIndex];
+            const typeName = selectedType ? selectedType.text.toUpperCase() : '';
+
+            // Reset dropdown
+            conditionSelect.innerHTML = '<option value="">-- Pilih --</option>';
+            conditionSelect.name = 'conditionId'; // Reset name
+            skillLevelIdInput.value = ''; // Clear hidden field
+
+            if (typeName.includes('JASA')) {
+                // Change to skill level
+                isServiceType = true;
+                conditionLabel.textContent = 'Level Skill';
+                conditionHint.textContent = 'Pilih level keahlian yang Anda tawarkan';
+                conditionSelect.name = 'skillLevelId'; // Change name for form submission
+
+                // Add skill level options
+                conditionOptions.jasa.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.id;
+                    option.textContent = opt.name;
+                    option.setAttribute('data-type', 'jasa');
+                    conditionSelect.appendChild(option);
+                });
+            } else {
+                // Change to condition
+                isServiceType = false;
+                conditionLabel.textContent = 'Kondisi';
+                conditionHint.textContent = 'Pilih kondisi barang Anda';
+                conditionSelect.name = 'conditionId'; // Use conditionId for goods
+
+                // Add condition options
+                conditionOptions.barang.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.id;
+                    option.textContent = opt.name;
+                    option.setAttribute('data-type', 'barang');
+                    conditionSelect.appendChild(option);
+                });
+            }
+        });
+
+        // Validation helper for images
+        function validateImageFile(file) {
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+            if (file.size > maxSize) {
+                throw new Error(`${file.name}: Ukuran melebihi 2MB (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+            }
+
+            if (!allowedTypes.includes(file.type)) {
+                throw new Error(`${file.name}: Format tidak didukung (${file.type || 'Unknown'})`);
+            }
+
+            const filename = file.name.toLowerCase();
+            const hasValidExtension = allowedExtensions.some(ext => filename.endsWith(ext));
+            if (!hasValidExtension) {
+                throw new Error(`${file.name}: Ekstensi tidak valid`);
+            }
+        }
+
+        // Image preview with validation
+        imageInput.addEventListener('change', function(e) {
+            imagePreview.innerHTML = '';
+            let validFiles = [];
+            let invalidFiles = [];
+            const files = Array.from(e.target.files);
+
+            // Validate each file
+            files.forEach((file, index) => {
+                try {
+                    validateImageFile(file);
+                    validFiles.push(file);
+                } catch (error) {
+                    invalidFiles.push(error.message);
+                }
+            });
+
+            // Show invalid file messages
+            if (invalidFiles.length > 0) {
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'margin-top: 15px; padding: 12px; background: #fee; border: 1px solid #fcc; border-radius: 6px; color: #c33;';
+                errorDiv.innerHTML = '<strong>⚠️ File tidak valid:</strong><br>' + invalidFiles.join('<br>');
+                imagePreview.appendChild(errorDiv);
+            }
+
+            // Display valid files only (max 5)
+            validFiles = validFiles.slice(0, 5);
+            if (validFiles.length > 0) {
+                const previewTitle = document.createElement('div');
+                previewTitle.style.cssText = 'margin-top: 20px; margin-bottom: 15px; font-weight: 600; color: #333;';
+                previewTitle.textContent = `✅ ${validFiles.length} foto siap diunggah${invalidFiles.length > 0 ? ' (file tidak valid diabaikan)' : ''}`;
+                imagePreview.appendChild(previewTitle);
+
+                validFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.createElement('div');
+                        preview.style.cssText = 'display: inline-block; position: relative; margin-right: 10px; margin-bottom: 10px;';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.cssText = 'width: 100px; height: 100px; border-radius: 6px; border: 1px solid #ddd;';
+
+                        const badge = document.createElement('div');
+                        badge.style.cssText = 'position: absolute; top: -5px; left: -5px; background: #667eea; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;';
+                        badge.textContent = index + 1;
+
+                        preview.appendChild(img);
+                        preview.appendChild(badge);
+                        imagePreview.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Reset file input to only include valid files
+            if (invalidFiles.length > 0 && validFiles.length === 0) {
+                imageInput.value = '';
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            loadingState.classList.add('active');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect ke items page dengan success message
+                    window.location.href = '/dashboard/items?success=Item berhasil dibuat';
+                } else {
+                    alert('Error: ' + data.message);
+                    loadingState.classList.remove('active');
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan: ' + error.message);
+                loadingState.classList.remove('active');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize Webix
+        webix.ready(function() {
+            // Any webix initialization here if needed
+        });
+    </script>
+</body>
+</html>

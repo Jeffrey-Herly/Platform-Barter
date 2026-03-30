@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Saya - Barterin</title>
+
+    <!-- Webix CSS -->
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        /* Layout utama mengikuti navbar.css (.dashboard-container, .sidebar, .main-content) */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            color: #111827;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Reviews Container */
+        .reviews-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .review-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-info {
+            flex: 1;
+        }
+
+        .reviewer-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .review-date {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .review-rating {
+            font-size: 18px;
+            color: #f59e0b;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 15px 0;
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .review-text.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state-subtext {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: white;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination-btn {
+            padding: 10px 16px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .page-number.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .page-number:hover:not(.disabled) {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .page-number.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Stats */
+        .review-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-box {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #999;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rating-distribution {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .rating-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rating-stars {
+            font-size: 14px;
+        }
+
+        .rating-count {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .page-title {
+                font-size: 22px;
+            }
+
+            .review-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .page-title {
+                font-size: 18px;
+            }
+
+            .back-btn {
+                width: 100%;
+            }
+
+            .review-header {
+                flex-direction: column;
+            }
+
+            .review-rating {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .pagination-controls {
+                flex-direction: column;
+            }
+
+            .pagination-btn {
+                width: 100%;
+            }
+
+            .pagination-numbers {
+                justify-content: center;
+            }
+
+            .review-stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <%- include('../../partials/navbar.ejs', { currentPage: 'reviews', showReviews: true, isAdminUser: user && user.isAdmin }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">⭐ Review dari Pengguna Lain</h1>
+                <button class="back-btn" onclick="window.location.href='/dashboard/profile';">← Kembali ke Profil</button>
+            </div>
+
+            <!-- Error Alert -->
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <span>⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <!-- Review Stats -->
+            <% if (reviewsData && reviewsData.totalCount > 0) { %>
+                <div class="review-stats">
+                    <div class="stat-box">
+                        <div class="stat-value"><%= reviewsData.totalCount %></div>
+                        <div class="stat-label">Total Review</div>
+                    </div>
+                    <div class="stat-box">
+                        <%
+                            let totalRating = 0;
+                            let count = reviewsData.reviews.length;
+                            reviewsData.reviews.forEach(r => { totalRating += r.rating; });
+                            let averageRating = count > 0 ? (totalRating / count).toFixed(1) : 0;
+                        %>
+                        <div class="stat-value"><%= averageRating %></div>
+                        <div class="stat-label">Rating Rata-rata</div>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Reviews List -->
+            <div class="reviews-container">
+                <% if (reviewsData && reviewsData.reviews && reviewsData.reviews.length > 0) { %>
+                    <% reviewsData.reviews.forEach(review => { %>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-name"><%= review.reviewerName %></div>
+                                    <div class="review-date">
+                                        <%= new Date(review.createdAt).toLocaleString('id-ID') %>
+                                    </div>
+                                </div>
+                                <div class="review-rating">
+                                    <%= '⭐'.repeat(review.rating) %>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <p class="review-text <%= !review.text ? 'empty' : '' %>">
+                                <%= review.text || '(Tidak ada komentar)' %>
+                            </p>
+                        </div>
+                    <% }); %>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Menampilkan <%= reviewsData.reviews.length %> dari <%= reviewsData.totalCount %> review
+                        </div>
+
+                        <div class="pagination-controls">
+                            <button class="pagination-btn"
+                                    <%= reviewsData.offset === 0 ? 'disabled' : '' %>
+                                    onclick="changePage(<%= Math.max(0, reviewsData.offset - reviewsData.limit) %>)">
+                                ← Sebelumnya
+                            </button>
+
+                            <div class="pagination-numbers">
+                                <%
+                                    let totalPages = Math.ceil(reviewsData.totalCount / reviewsData.limit);
+                                    let currentPage = Math.floor(reviewsData.offset / reviewsData.limit) + 1;
+                                    let pageStart = Math.max(1, currentPage - 2);
+                                    let pageEnd = Math.min(totalPages, currentPage + 2);
+
+                                    if (pageStart > 1) {
+                                %>
+                                        <button class="page-number" onclick="changePage(0)">1</button>
+                                        <% if (pageStart > 2) { %>
+                                            <span style="color: white; padding: 8px 4px;">...</span>
+                                        <% } %>
+                                    <% } %>
+
+                                    <% for (let p = pageStart; p <= pageEnd; p++) { %>
+                                        <button class="page-number <%= p === currentPage ? 'active' : '' %>"
+                                                onclick="changePage(<%= (p - 1) * reviewsData.limit %>)">
+                                            <%= p %>
+                                        </button>
+                                    <% } %>
+
+                                    <% if (pageEnd < totalPages) { %>
+                                        <% if (pageEnd < totalPages - 1) { %>
+                                            <span style="color: white; padding: 8px 4px;">...</span>
+                                        <% } %>
+                                        <button class="page-number" onclick="changePage(<%= (totalPages - 1) * reviewsData.limit %>)">
+                                            <%= totalPages %>
+                                        </button>
+                                    <% } %>
+                            </div>
+
+                            <button class="pagination-btn" <% if (!reviewsData.hasMore) { %>disabled<% } %> onclick="changePage(<%= reviewsData.offset + reviewsData.limit %>)">
+                                Selanjutnya →
+                            </button>
+                        </div>
+                    </div>
+
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⭐</div>
+                        <p class="empty-state-text">Belum ada review</p>
+                        <p class="empty-state-subtext">Review dari pengguna lain akan ditampilkan di sini setelah transaksi barter selesai</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Webix JS -->
+    <script src="/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+
+    <script>
+        // Pagination
+        function changePage(offset) {
+            const url = new URL(window.location);
+            url.searchParams.set('offset', offset);
+            window.location.href = url.toString();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Reviews page loaded');
+        });
+    </script>
+</body>
+</html>

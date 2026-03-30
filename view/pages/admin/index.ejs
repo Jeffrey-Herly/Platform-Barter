@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Barterin</title>
+
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            color: #111827;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+        }
+
+        .admin-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .admin-subtitle {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .back-button {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-button:hover {
+            background: #f3f4f6;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 16px 16px 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+            margin-top: 4px;
+        }
+
+        .section {
+            background: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 18px 18px 16px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .section-link {
+            font-size: 13px;
+            color: #4f46e5;
+            text-decoration: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-yellow {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <%- include('../../partials/navbar.ejs', { currentPage: 'admin', isAdminUser: true }) %>
+
+        <div class="main-content">
+            <div class="admin-header">
+                <div>
+                    <div class="admin-title">Admin Dashboard</div>
+                    <div class="admin-subtitle">
+                        Ringkasan aktivitas sistem barter, pengguna, dan laporan.
+                    </div>
+                </div>
+                <a href="/dashboard/" class="back-button">
+                    ← Kembali ke Dashboard
+                </a>
+            </div>
+
+            <% if (error) { %>
+                <div style="background:#fee2e2;color:#b91c1c;padding:10px 12px;border-radius:8px;border:1px solid #fecaca;margin-bottom:16px;font-size:13px;">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <% if (overview && overview.stats) { %>
+                <div class="admin-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Pengguna</div>
+                        <div class="stat-value"><%= overview.stats.total_users %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pengguna Aktif</div>
+                        <div class="stat-value"><%= overview.stats.active_users %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Item</div>
+                        <div class="stat-value"><%= overview.stats.total_items %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Item Tersedia</div>
+                        <div class="stat-value"><%= overview.stats.available_items %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Transaksi Aktif</div>
+                        <div class="stat-value"><%= overview.stats.active_transactions %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Laporan Terbuka</div>
+                        <div class="stat-value"><%= overview.stats.open_reports %></div>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">Pengguna Terbaru</div>
+                    <a href="/admin/users" class="section-link">Lihat semua pengguna</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Terverifikasi</th>
+                            <th>Daftar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (overview && overview.recentUsers && overview.recentUsers.length > 0) { %>
+                            <% overview.recentUsers.forEach(function(u) { %>
+                                <tr>
+                                    <td><%= u.full_name %></td>
+                                    <td><%= u.email %></td>
+                                    <td>
+                                        <% if (u.is_active) { %>
+                                            <span class="badge badge-green">Aktif</span>
+                                        <% } else { %>
+                                            <span class="badge badge-red">Nonaktif</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (u.email_verified) { %>
+                                            <span class="badge badge-green">Ya</span>
+                                        <% } else { %>
+                                            <span class="badge badge-yellow">Belum</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(u.created_at).toLocaleString('id-ID') %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5">Tidak ada data pengguna.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">Item Terbaru</div>
+                    <a href="/admin/items" class="section-link">Lihat semua item</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Pemilik</th>
+                            <th>Kategori</th>
+                            <th>Tipe</th>
+                            <th>Status</th>
+                            <th>Dibuat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (overview && overview.recentItems && overview.recentItems.length > 0) { %>
+                            <% overview.recentItems.forEach(function(i) { %>
+                                <tr>
+                                    <td><%= i.title %></td>
+                                    <td><%= i.owner_name %> (<%= i.owner_email %>)</td>
+                                    <td><%= i.category_name %></td>
+                                    <td><%= i.item_type %></td>
+                                    <td>
+                                        <% if (i.is_available) { %>
+                                            <span class="badge badge-green">Tersedia</span>
+                                        <% } else { %>
+                                            <span class="badge badge-red">Ditutup</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(i.created_at).toLocaleString('id-ID') %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6">Tidak ada data item.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">Laporan Terbaru</div>
+                    <a href="/admin/reports" class="section-link">Lihat semua laporan</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jenis</th>
+                            <th>Status</th>
+                            <th>Pelapor</th>
+                            <th>Target</th>
+                            <th>Dibuat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (overview && overview.recentReports && overview.recentReports.length > 0) { %>
+                            <% overview.recentReports.forEach(function(r) { %>
+                                <tr>
+                                    <td><%= r.report_type %></td>
+                                    <td><%= r.status %></td>
+                                    <td><%= r.reporter_name %></td>
+                                    <td>
+                                        <% if (r.target_user_name) { %>
+                                            <%= r.target_user_name %>
+                                        <% } else if (r.target_item_title) { %>
+                                            Item: <%= r.target_item_title %>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(r.created_at).toLocaleString('id-ID') %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5">Tidak ada laporan.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Tags - Test Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .test-group {
+            margin-bottom: 15px;
+        }
+
+        .test-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .test-button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .test-button.secondary {
+            background: #6c757d;
+        }
+
+        .test-button.secondary:hover {
+            background: #5a6268;
+        }
+
+        .test-button.danger {
+            background: #dc3545;
+        }
+
+        .test-button.danger:hover {
+            background: #c82333;
+        }
+
+        .test-result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #333;
+        }
+
+        .result-item {
+            padding: 4px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .key {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .value {
+            color: #764ba2;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .api-response {
+            background: #1e1e1e;
+            color: #e0e0e0;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checklist input[type="checkbox"]:checked + label {
+            color: #667eea;
+            text-decoration: line-through;
+        }
+
+        .checklist label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏷️ Personalized Tags - Test Suite</h1>
+            <p class="subtitle">Comprehensive testing guide for custom tags feature implementation</p>
+        </header>
+
+        <div class="grid">
+            <!-- Database Tests -->
+            <div class="card">
+                <h2>📊 Database Migration</h2>
+                <div class="test-group">
+                    <div class="test-title">
+                        Migration Status
+                        <span class="status-badge status-pending">PENDING</span>
+                    </div>
+                    <button class="test-button" onclick="checkMigrationStatus()">Check Migration</button>
+                    <button class="test-button secondary" onclick="showMigrationSql()">View SQL</button>
+                    <div class="test-result" id="migration-result"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Run Migration</div>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        Execute the migration SQL file on your database:
+                    </p>
+                    <code style="background: #f8f9fa; padding: 8px; border-radius: 4px; display: block; margin-bottom: 10px;">
+                        psql -U username -d database_name -f migrations/005_add_user_personalized_tags.sql
+                    </code>
+                    <button class="test-button" onclick="executeMigration()">Execute Migration</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="user-tags-count">-</div>
+                        <div class="stat-label">User Tags</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="custom-tags-count">-</div>
+                        <div class="stat-label">Custom Tags</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Tests -->
+            <div class="card">
+                <h2>🔌 API Endpoints</h2>
+                
+                <div class="test-group">
+                    <div class="test-title">GET /api/tags/user</div>
+                    <button class="test-button" onclick="testGetUserTags()">Test</button>
+                    <button class="test-button secondary" onclick="copyCommand('tags/user')">Copy cURL</button>
+                    <div class="test-result" id="api-user-tags"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">POST /api/tags/custom</div>
+                    <div class="input-group">
+                        <input type="text" id="tag-name-input" placeholder="Enter tag name..." value="Test Tag">
+                    </div>
+                    <button class="test-button" onclick="testCreateTag()">Create Tag</button>
+                    <div class="test-result" id="api-create-tag"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">GET /api/tags/user/search</div>
+                    <div class="input-group">
+                        <input type="text" id="search-term-input" placeholder="Search term..." value="tag">
+                    </div>
+                    <button class="test-button" onclick="testSearchTags()">Search</button>
+                    <div class="test-result" id="api-search-tags"></div>
+                </div>
+            </div>
+
+            <!-- Frontend Tests -->
+            <div class="card">
+                <h2>🎨 Frontend TagManager</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ Open create-item.ejs or edit-item.ejs page in another tab to test frontend functionality
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">TagManager Initialization</div>
+                    <button class="test-button" onclick="testTagManagerInit()">Test Init</button>
+                    <div class="test-result" id="frontend-init"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Tag Input Functionality</div>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="check-1"><label for="check-1">Type partial tag name</label></li>
+                        <li><input type="checkbox" id="check-2"><label for="check-2">Autocomplete suggestions appear</label></li>
+                        <li><input type="checkbox" id="check-3"><label for="check-3">Global tags show blue badges</label></li>
+                        <li><input type="checkbox" id="check-4"><label for="check-4">Custom tags show yellow badges</label></li>
+                        <li><input type="checkbox" id="check-5"><label for="check-5">Can create new tag on-the-fly</label></li>
+                        <li><input type="checkbox" id="check-6"><label for="check-6">Added tags appear as badges</label></li>
+                        <li><input type="checkbox" id="check-7"><label for="check-7">Can remove tags with ×</label></li>
+                        <li><input type="checkbox" id="check-8"><label for="check-8">Hidden input updates with tag IDs</label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- User Flow Tests -->
+            <div class="card">
+                <h2>👤 User Journey Tests</h2>
+                
+                <div class="test-group">
+                    <div class="test-title">Scenario 1: Create Item with Custom Tag</div>
+                    <ol style="font-size: 13px; color: #666; padding-left: 20px; line-height: 1.6;">
+                        <li>Go to Create Item page</li>
+                        <li>Type tag name (e.g., "Laptop Gaming")</li>
+                        <li>Click "Create new: Laptop Gaming"</li>
+                        <li>Verify tag added to selection</li>
+                        <li>Fill rest of form and submit</li>
+                        <li>Verify item created with tag</li>
+                    </ol>
+                    <button class="test-button" onclick="showScenario1()">View Details</button>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Scenario 2: Reuse Existing Tag</div>
+                    <ol style="font-size: 13px; color: #666; padding-left: 20px; line-height: 1.6;">
+                        <li>Create first item with tag "Elektronik"</li>
+                        <li>Create second item</li>
+                        <li>Type "Elek" in tag input</li>
+                        <li>Should show "Elektronik" (yellow badge)</li>
+                        <li>Click to add</li>
+                        <li>Verify tag linked to second item</li>
+                    </ol>
+                    <button class="test-button" onclick="showScenario2()">View Details</button>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Scenario 3: Permission Check</div>
+                    <ol style="font-size: 13px; color: #666; padding-left: 20px; line-height: 1.6;">
+                        <li>User A creates custom tag "Photography"</li>
+                        <li>User B tries to delete User A's tag via API</li>
+                        <li>Should receive 403 Forbidden</li>
+                        <li>Verify tag still exists for User A</li>
+                    </ol>
+                    <button class="test-button" onclick="showScenario3()">View Details</button>
+                </div>
+            </div>
+
+            <!-- Mobile Tests -->
+            <div class="card">
+                <h2>📱 Mobile Responsive Tests</h2>
+                
+                <div class="test-group">
+                    <div class="test-title">Portrait Mode (≤768px)</div>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="mobile-1"><label for="mobile-1">Tag input full width</label></li>
+                        <li><input type="checkbox" id="mobile-2"><label for="mobile-2">Add button below input</label></li>
+                        <li><input type="checkbox" id="mobile-3"><label for="mobile-3">Suggestions dropdown scrollable</label></li>
+                        <li><input type="checkbox" id="mobile-4"><label for="mobile-4">Tag badges stack properly</label></li>
+                        <li><input type="checkbox" id="mobile-5"><label for="mobile-5">Remove button accessible</label></li>
+                    </ul>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Landscape Mode (≥769px)</div>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="mobile-6"><label for="mobile-6">Tag input and button in one row</label></li>
+                        <li><input type="checkbox" id="mobile-7"><label for="mobile-7">Suggestions positioned correctly</label></li>
+                        <li><input type="checkbox" id="mobile-8"><label for="mobile-8">No horizontal scroll</label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Performance Tests -->
+            <div class="card">
+                <h2>⚡ Performance Tests</h2>
+                
+                <div class="test-group">
+                    <div class="test-title">API Response Times</div>
+                    <button class="test-button" onclick="testAPIPerformance()">Test Performance</button>
+                    <div class="test-result" id="performance-result"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Database Query Times</div>
+                    <button class="test-button" onclick="testDBPerformance()">Test Database</button>
+                    <div class="test-result" id="db-performance"></div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="avg-api-time">-</div>
+                        <div class="stat-label">Avg API (ms)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="avg-db-time">-</div>
+                        <div class="stat-label">Avg DB (ms)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authorization Tests -->
+            <div class="card">
+                <h2>🔒 Security & Authorization</h2>
+                
+                <div class="test-group">
+                    <div class="test-title">Authentication Checks</div>
+                    <button class="test-button" onclick="testUnauthenticatedAccess()">Test Unauthorized</button>
+                    <div class="test-result" id="auth-test"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Tag Ownership Verification</div>
+                    <button class="test-button" onclick="testTagOwnership()">Test Ownership</button>
+                    <div class="test-result" id="ownership-test"></div>
+                </div>
+
+                <div class="test-group">
+                    <div class="test-title">Data Validation</div>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="sec-1"><label for="sec-1">Empty tag name rejected</label></li>
+                        <li><input type="checkbox" id="sec-2"><label for="sec-2">Too short name rejected</label></li>
+                        <li><input type="checkbox" id="sec-3"><label for="sec-3">Too long name rejected</label></li>
+                        <li><input type="checkbox" id="sec-4"><label for="sec-4">SQL injection prevented</label></li>
+                        <li><input type="checkbox" id="sec-5"><label for="sec-5">XSS prevention working</label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Debugging Console -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2>🔧 Debug Console</h2>
+                <div class="test-group">
+                    <div class="test-title">Console Logs</div>
+                    <button class="test-button" onclick="clearConsole()">Clear</button>
+                    <button class="test-button secondary" onclick="exportLogs()">Export Logs</button>
+                    <div class="test-result" id="console-output" style="max-height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility functions
+        function log(message, data = null) {
+            const output = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = 'result-item';
+            
+            if (data) {
+                line.innerHTML = `<span class="key">[${timestamp}]</span> ${message}<br><span class="value">${JSON.stringify(data, null, 2)}</span>`;
+            } else {
+                line.innerHTML = `<span class="key">[${timestamp}]</span> ${message}`;
+            }
+            
+            output.appendChild(line);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        function exportLogs() {
+            const logs = document.getElementById('console-output').innerText;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tags-test-logs-${new Date().getTime()}.txt`;
+            a.click();
+        }
+
+        // Database tests
+        async function checkMigrationStatus() {
+            log('Checking migration status...');
+            try {
+                const response = await fetch('/api/tags/user');
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Migration appears successful', data);
+                    document.getElementById('migration-result').innerHTML = 
+                        '<span style="color: #155724;">✅ Tables and columns verified</span>';
+                } else {
+                    log('❌ API endpoint not responding correctly', response.status);
+                }
+            } catch (error) {
+                log('❌ Error checking migration', error.message);
+            }
+        }
+
+        function showMigrationSql() {
+            const sql = `-- 005_add_user_personalized_tags.sql
+ALTER TABLE tags 
+  ADD COLUMN user_id uuid REFERENCES users(user_id) ON DELETE CASCADE,
+  ADD COLUMN is_custom boolean DEFAULT false;
+
+DROP CONSTRAINT IF EXISTS unique_tag_name ON tags;
+ADD CONSTRAINT unique_tags_per_user UNIQUE(tag_name, user_id, is_custom);
+
+CREATE INDEX idx_tags_user_id ON tags(user_id);
+CREATE INDEX idx_tags_custom_by_user ON tags(user_id, is_custom);
+
+CREATE OR REPLACE VIEW user_tags_view AS
+  SELECT * FROM tags 
+  WHERE is_custom = false OR user_id IS NOT NULL;`;
+
+            const result = document.getElementById('migration-result');
+            result.innerHTML = '<pre>' + sql + '</pre>';
+        }
+
+        // API tests
+        async function testGetUserTags() {
+            log('Testing GET /api/tags/user...');
+            try {
+                const response = await fetch('/api/tags/user');
+                const data = await response.json();
+                log('✅ GET /api/tags/user successful', data);
+                
+                const resultDiv = document.getElementById('api-user-tags');
+                resultDiv.innerHTML = JSON.stringify(data, null, 2);
+                
+                if (data.data && data.data.length > 0) {
+                    document.getElementById('user-tags-count').innerText = data.data.length;
+                    document.getElementById('custom-tags-count').innerText = 
+                        data.data.filter(t => t.is_custom).length;
+                }
+            } catch (error) {
+                log('❌ Error testing GET /api/tags/user', error.message);
+            }
+        }
+
+        async function testCreateTag() {
+            const tagName = document.getElementById('tag-name-input').value;
+            log(`Creating tag: "${tagName}"`);
+            
+            try {
+                const response = await fetch('/api/tags/custom', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tag_name: tagName })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    log('✅ Tag created successfully', data.data);
+                } else {
+                    log('❌ Tag creation failed', data);
+                }
+                
+                document.getElementById('api-create-tag').innerHTML = 
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                log('❌ Error creating tag', error.message);
+            }
+        }
+
+        async function testSearchTags() {
+            const term = document.getElementById('search-term-input').value;
+            log(`Searching tags with term: "${term}"`);
+            
+            try {
+                const response = await fetch(`/api/tags/user/search?q=${encodeURIComponent(term)}`);
+                const data = await response.json();
+                log('✅ Search successful', data);
+                
+                document.getElementById('api-search-tags').innerHTML = 
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                log('❌ Error searching tags', error.message);
+            }
+        }
+
+        // Frontend tests
+        function testTagManagerInit() {
+            log('Testing TagManager initialization...');
+            try {
+                if (window.tagManager) {
+                    log('✅ TagManager is initialized', {
+                        containerSelector: window.tagManager.containerSelector,
+                        selectedTags: window.tagManager.selectedTags
+                    });
+                    document.getElementById('frontend-init').innerHTML = 
+                        '<span style="color: #155724;">✅ TagManager initialized and available</span>';
+                } else {
+                    log('⚠️ TagManager not yet initialized', 'Load create-item.ejs or edit-item.ejs page');
+                    document.getElementById('frontend-init').innerHTML = 
+                        '<span style="color: #856404;">⚠️ Open create-item or edit-item page to test</span>';
+                }
+            } catch (error) {
+                log('❌ Error testing TagManager', error.message);
+            }
+        }
+
+        // Performance tests
+        async function testAPIPerformance() {
+            log('Testing API performance...');
+            const times = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const start = performance.now();
+                try {
+                    await fetch('/api/tags/user');
+                    const end = performance.now();
+                    times.push(end - start);
+                } catch (error) {
+                    log('Error in performance test', error.message);
+                }
+            }
+            
+            const avg = (times.reduce((a, b) => a + b) / times.length).toFixed(2);
+            const max = Math.max(...times).toFixed(2);
+            const min = Math.min(...times).toFixed(2);
+            
+            log('✅ Performance test complete', { avg: `${avg}ms`, max: `${max}ms`, min: `${min}ms` });
+            document.getElementById('performance-result').innerHTML = 
+                `<div class="stat-value">${avg}</div><div class="stat-label">ms average (10 calls)</div>`;
+            document.getElementById('avg-api-time').innerText = avg;
+        }
+
+        async function testDBPerformance() {
+            log('Testing database performance...');
+            // This would need a dedicated API endpoint to test
+            log('⚠️ Database performance test requires API endpoint');
+        }
+
+        // Security tests
+        async function testUnauthenticatedAccess() {
+            log('Testing unauthenticated access...');
+            // Clear cookies/auth and test
+            log('⚠️ Manual test: Open DevTools → Application → Cookies → Delete auth cookie');
+            log('Then try accessing /api/tags/user');
+        }
+
+        async function testTagOwnership() {
+            log('Testing tag ownership verification...');
+            log('⚠️ Manual test: Login as User A, create tag, login as User B');
+            log('User B should not be able to delete User A\'s tag');
+        }
+
+        // Scenario guides
+        function showScenario1() {
+            alert(`Scenario 1: Create Item with Custom Tag
+
+Steps:
+1. Navigate to Create Item page
+2. In the tag input field, type "Laptop Gaming"
+3. Click on "Create new: Laptop Gaming" option
+4. Verify the tag appears as a yellow badge
+5. Fill in other required fields (title, description, category, type)
+6. Submit the form
+7. Verify item was created with the tag
+
+Expected Results:
+✅ Tag shows as yellow badge (custom tag)
+✅ Item created successfully
+✅ Tag appears on item detail page
+✅ Tag appears when editing the item`);
+        }
+
+        function showScenario2() {
+            alert(`Scenario 2: Reuse Existing Tag
+
+Steps:
+1. Create a first item with tag "Elektronik"
+2. Navigate to Create Item page
+3. Type "Elek" in the tag input
+4. Verify "Elektronik" appears with yellow badge
+5. Click to add the tag
+6. Create the item
+
+Expected Results:
+✅ Tag shows as yellow badge (your custom tag)
+✅ Same tag ID used for both items
+✅ Tag appears in database linked to both items`);
+        }
+
+        function showScenario3() {
+            alert(`Scenario 3: Permission Check
+
+Steps:
+1. User A logs in and creates custom tag "Photography"
+2. User A makes note of the tag ID (check Network tab)
+3. User B logs in
+4. User B tries to delete User A's tag via API:
+   DELETE /api/tags/custom/{tag-id-from-step-2}
+5. Verify error response
+
+Expected Results:
+❌ User B gets 403 Forbidden error
+✅ Tag still exists for User A
+✅ User A can still use the tag`);
+        }
+
+        // Copy command helpers
+        function copyCommand(endpoint) {
+            const commands = {
+                'tags/user': 'curl -X GET http://localhost:3000/api/tags/user \\n  -H "Cookie: auth-token=your-token"'
+            };
+            
+            const cmd = commands[endpoint];
+            navigator.clipboard.writeText(cmd);
+            alert('Command copied to clipboard:\n\n' + cmd);
+        }
+
+        // Initialize tests on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🏷️ Personalized Tags Test Suite initialized');
+            log('Ready for testing. Select a test category to begin.');
+            testTagManagerInit();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi - Barterin</title>
+
+    <!-- Webix CSS -->
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        /* Layout utama mengikuti navbar.css (.dashboard-container, .sidebar, .main-content) */
+
+        .page-title {
+            color: #111827;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* Header with Actions */
+        .notifications-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Notification Card */
+        .notification-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .notification-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .notification-card.unread {
+            background: #f0f4ff;
+            border-left-color: #ef4444;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .notification-type {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .notification-type.barter-request {
+            background: #ef4444;
+        }
+
+        .notification-type.barter-accepted {
+            background: #22c55e;
+        }
+
+        .notification-type.barter-rejected {
+            background: #ffa061;
+        }
+
+        .notification-type.new-message {
+            background: #748ffc;
+        }
+
+        .notification-type.review-received {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .notification-type.item-matched {
+            background: #00d4ff;
+            color: #333;
+        }
+
+        .notification-type.system {
+            background: #868e96;
+        }
+
+        .notification-unread-badge {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .notification-meta {
+            display: flex;
+            gap: 15px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .delete-btn {
+            background: #ffebee;
+            border: none;
+            color: #c62828;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state-subtext {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #667eea;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .notifications-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .action-btn {
+                flex: 1;
+            }
+
+            .notification-card {
+                flex-direction: column;
+            }
+
+            .notification-actions {
+                width: 100%;
+                justify-content: flex-end;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation Component -->
+        <%- include('../../partials/navbar.ejs', { currentPage: 'notifications', showReviews: false, isAdminUser: user && user.isAdmin }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1 class="page-title">🔔 Notifikasi</h1>
+
+            <!-- Error Alert -->
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <span>⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <!-- Header with Actions -->
+            <% if (notificationsData && notificationsData.notifications && notificationsData.notifications.length > 0) { %>
+                <div class="notifications-header">
+                    <div class="header-text">
+                        <strong><%= notificationsData.unreadCount %></strong> notifikasi belum dibaca
+                    </div>
+                    <div class="header-actions">
+                        <button class="action-btn btn-primary" onclick="markAllAsRead()">Tandai Semua Dibaca</button>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Notifications List -->
+            <div id="notificationsList">
+                <% if (notificationsData && notificationsData.notifications && notificationsData.notifications.length > 0) { %>
+                    <% notificationsData.notifications.forEach(notif => { %>
+                        <div class="notification-card <%= notif.isRead ? '' : 'unread' %>" data-id="<%= notif.id %>">
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <span class="notification-type <%= notif.type.toLowerCase().replace(/_/g, '-') %>">
+                                        <%= notif.type.replace(/_/g, ' ') %>
+                                    </span>
+                                    <% if (!notif.isRead) { %>
+                                        <span class="notification-unread-badge"></span>
+                                    <% } %>
+                                </div>
+                                <div class="notification-title"><%= notif.title %></div>
+                                <p class="notification-message"><%= notif.message %></p>
+                                <div class="notification-meta">
+                                    <span>⏰ <%= new Date(notif.createdAt).toLocaleString('id-ID') %></span>
+                                </div>
+                            </div>
+                            <div class="notification-actions">
+                                <% if (!notif.isRead) { %>
+                                    <button class="action-btn btn-secondary" onclick="markAsRead('<%= notif.id %>'); return false;">Baca</button>
+                                <% } %>
+                                <button class="delete-btn" onclick="deleteNotification('<%= notif.id %>'); return false;">Hapus</button>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p class="empty-state-text">Tidak ada notifikasi</p>
+                        <p class="empty-state-subtext">Anda akan mendapatkan notifikasi ketika ada aktivitas penting</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Webix JS -->
+    <script src="/webix/webix.min.js"></script>
+
+    <!-- Navbar JS Utilities -->
+    <script src="/js/navbar.js"></script>
+
+    <script>
+
+        // Mark notification as read
+        async function markAsRead(notificationId) {
+            try {
+                const response = await fetch(`/api/dashboard/notifications/${notificationId}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update UI
+                    const card = document.querySelector(`[data-id="${notificationId}"]`);
+                    if (card) {
+                        card.classList.remove('unread');
+                        // Remove the read button
+                        const readBtn = card.querySelector('.btn-secondary');
+                        if (readBtn) readBtn.remove();
+                    }
+                } else {
+                    alert('Gagal menandai notifikasi');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan');
+            }
+        }
+
+        // Mark all notifications as read
+        async function markAllAsRead() {
+            if (confirm('Tandai semua notifikasi sebagai sudah dibaca?')) {
+                try {
+                    const response = await fetch('/api/dashboard/notifications/read-all', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Gagal menandai notifikasi');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan');
+                }
+            }
+        }
+
+        // Delete notification
+        async function deleteNotification(notificationId) {
+            if (confirm('Hapus notifikasi ini?')) {
+                try {
+                    const response = await fetch(`/api/dashboard/notifications/${notificationId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Remove notification card from UI
+                        const card = document.querySelector(`[data-id="${notificationId}"]`);
+                        if (card) {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateX(-20px)';
+                            setTimeout(() => card.remove(), 300);
+                        }
+
+                        // Check if no notifications left
+                        const remaining = document.querySelectorAll('.notification-card').length;
+                        if (remaining === 0) {
+                            location.reload();
+                        }
+                    } else {
+                        alert('Gagal menghapus notifikasi');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan');
+                }
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Notifications page loaded');
+        });
+    </script>
+</body>
+</html>

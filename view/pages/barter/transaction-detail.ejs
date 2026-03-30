@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Negosiasi Barter - Barterin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f3f4f6;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .transaction-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-header h2 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #ffeaa7;
+            color: #2d3436;
+        }
+
+        .status-accepted {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        .status-rejected {
+            background: #fab1a0;
+            color: #d63031;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .chat-panel {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .transaction-info {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-info h5 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .item-card h6 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .item-card p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-direction: column;
+        }
+
+        .action-buttons button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-accept {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ddd;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-panel {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <!-- Header -->
+    <div class="transaction-header">
+        <button class="btn btn-link" onclick="window.history.back()" style="padding: 0; color: #667eea;">
+            ← Kembali
+        </button>
+        <h2>Negosiasi Barter</h2>
+        <% if (transaction && transaction.status_name) { %>
+            <span class="status-badge status-<%= transaction.status_name.toLowerCase() %>">
+                <%= transaction.status_name %>
+            </span>
+        <% } %>
+    </div>
+
+    <% if (!transaction) { %>
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> Transaksi tidak ditemukan
+        </div>
+    <% } else { %>
+        <div class="main-content">
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <!-- Chat component akan di-load via JavaScript -->
+                <div id="chat-container" style="width: 100%; height: 100%; display: flex; flex-direction: column;"></div>
+            </div>
+
+            <!-- Transaction Info Panel -->
+            <div class="transaction-info">
+                <!-- Partner Info -->
+                <h5><i class="fas fa-user"></i> Partner</h5>
+                <%
+                    const isRequester = currentUser.userId === transaction.requester_id;
+                    const partner = isRequester ? {
+                        name: transaction.owner_name,
+                        email: transaction.owner_email,
+                        avatar: partnerAvatar
+                    } : {
+                        name: transaction.requester_name,
+                        email: transaction.requester_email,
+                        avatar: partnerAvatar
+                    };
+
+                    // Selalu tampilkan item berdasarkan peran transaksi:
+                    // - "Item yang Ditawarkan" = item milik requester
+                    // - "Item yang Diinginkan" = item milik owner
+                    const requesterItemTitle = transaction.requester_item_title;
+                    const ownerItemTitle = transaction.owner_item_title;
+                    const requesterItemImage = transaction.requester_item_image;
+                    const ownerItemImage = transaction.owner_item_image;
+                    const requesterItemId = transaction.requester_item_id;
+                    const ownerItemId = transaction.owner_item_id;
+                %>
+                <div class="user-info">
+                    <img src="<%= partner.avatar || '/images/default-avatar.png' %>" alt="<%= partner.name %>" class="user-avatar">
+                    <div>
+                        <div style="font-weight: 600;"><%= partner.name %></div>
+                        <div><%= partner.email %></div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Item Being Offered -->
+                <h5><i class="fas fa-cube"></i> Item yang Ditawarkan</h5>
+                <div class="item-card" style="cursor: pointer;" onclick="window.location.href='/items/<%= requesterItemId %>'">
+                    <h6><%= requesterItemTitle %></h6>
+                    <% if (requesterItemImage) { %>
+                        <img src="<%= requesterItemImage %>" alt="<%= requesterItemTitle %>" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 6px; margin-top: 8px;">
+                    <% } %>
+                    <p style="margin-top: 8px;"><%= isRequester ? 'Milik Anda' : 'Milik Partner' %></p>
+                </div>
+
+                <!-- Item Wanted -->
+                <h5><i class="fas fa-heart"></i> Item yang Diinginkan</h5>
+                <div class="item-card" style="cursor: pointer;" onclick="window.location.href='/items/<%= ownerItemId %>'">
+                    <h6><%= ownerItemTitle %></h6>
+                    <% if (ownerItemImage) { %>
+                        <img src="<%= ownerItemImage %>" alt="<%= ownerItemTitle %>" style="width: 100%; max-height: 160px; object-fit: cover; border-radius: 6px; margin-top: 8px;">
+                    <% } %>
+                    <p style="margin-top: 8px;"><%= isRequester ? 'Milik Partner' : 'Milik Anda' %></p>
+                </div>
+
+                <% if (transaction.notes) { %>
+                    <hr>
+                    <h5><i class="fas fa-sticky-note"></i> Catatan</h5>
+                    <p style="font-size: 14px; color: #666;"><%= transaction.notes %></p>
+                <% } %>
+
+                <hr>
+
+                <!-- Actions -->
+                <% if (!isRequester && transaction.status_name === 'PENDING') { %>
+                    <div class="action-buttons">
+                        <button class="btn-accept" onclick="acceptOffer('<%= transaction.transaction_id %>')">
+                            <i class="fas fa-check"></i> Terima Penawaran
+                        </button>
+                        <button class="btn-reject" onclick="rejectOffer('<%= transaction.transaction_id %>')">
+                            <i class="fas fa-times"></i> Tolak Penawaran
+                        </button>
+                    </div>
+                <% } %>
+
+                <% 
+                    const validStatusesForCompletion = ['ACCEPTED', 'AWAITING_RECEIPT_BY_OWNER', 'AWAITING_RECEIPT_BY_REQUESTER'];
+                    const hasRequesterConfirmed = transaction.requester_confirmed_at != null;
+                    const hasOwnerConfirmed = transaction.owner_confirmed_at != null;
+                    
+                    let canConfirmReceipt = false;
+                    let waitingMsg = '';
+
+                    if (validStatusesForCompletion.includes(transaction.status_name)) {
+                        if (isRequester) {
+                            if (!hasRequesterConfirmed) canConfirmReceipt = true;
+                            else waitingMsg = 'Menunggu partner mengonfirmasi penerimaan barang.';
+                        } else {
+                            if (!hasOwnerConfirmed) canConfirmReceipt = true;
+                            else waitingMsg = 'Menunggu partner mengonfirmasi penerimaan barang.';
+                        }
+                    }
+                %>
+
+                <% if (canConfirmReceipt) { %>
+                    <div class="action-buttons">
+                        <button class="btn-accept" style="background-color: #0284c7;" onclick="completeTransaction('<%= transaction.transaction_id %>')">
+                            <i class="fas fa-box-open"></i> Barang Diterima / Selesai
+                        </button>
+                    </div>
+                <% } else if (waitingMsg) { %>
+                    <div style="padding: 10px; background: #fff3cd; color: #856404; border-radius: 8px; font-size: 13px; margin-top: 15px; border: 1px solid #ffeeba;">
+                        <i class="fas fa-hourglass-half"></i> <%= waitingMsg %>
+                    </div>
+                <% } %>
+
+                <div style="padding: 10px; background: #f0f7ff; border-radius: 8px; font-size: 12px; color: #666; margin-top: 15px;">
+                    <i class="fas fa-info-circle"></i> Gunakan chat di sebelah untuk bernegosiasi
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<script>
+    const currentUser = <%- JSON.stringify(currentUser) %>;
+    const transaction = <%- JSON.stringify(transaction) %>;
+
+    async function acceptOffer(transactionId) {
+        if (confirm('Anda yakin ingin menerima penawaran ini?')) {
+            try {
+                const response = await fetch(`/barter/${transactionId}/accept`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message);
+                }
+
+                alert('✅ Penawaran diterima! Silakan hubungi partner untuk melanjutkan.');
+                location.reload();
+            } catch (error) {
+                alert('❌ Gagal menerima penawaran: ' + error.message);
+            }
+        }
+    }
+
+    async function rejectOffer(transactionId) {
+        if (confirm('Anda yakin ingin menolak penawaran ini?')) {
+            try {
+                const response = await fetch(`/barter/${transactionId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message);
+                }
+
+                alert('✅ Penawaran ditolak.');
+                window.history.back();
+            } catch (error) {
+                alert('❌ Gagal menolak penawaran: ' + error.message);
+            }
+        }
+    }
+
+    async function completeTransaction(transactionId) {
+        if (confirm('Apakah Anda yakin sudah menerima barang barter ini dan ingin menyelesaikan transaksi?')) {
+            try {
+                const response = await fetch(`/barter/${transactionId}/complete`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal menyelesaikan transaksi');
+                }
+
+                alert('✅ ' + data.message);
+                location.reload();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+    }
+
+    function getAuthToken() {
+        return localStorage.getItem('authToken') ||
+               sessionStorage.getItem('authToken') ||
+               document.cookie.split(';').find(c => c.includes('token'))?.split('=')[1] ||
+               '';
+    }
+
+    // Initialize chat on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        if (transaction) {
+            loadChatComponent();
+        }
+    });
+
+    /**
+     * Load chat component
+     */
+    async function loadChatComponent() {
+        const container = document.getElementById('chat-container');
+        if (!container) return;
+
+        try {
+            // Create chat HTML
+            const chatHTML = `
+                <div style="display: flex; flex-direction: column; height: 100%; background: white;">
+                    <!-- Chat Header -->
+                    <div style="padding: 15px; background: #667eea; color: white; border-bottom: 1px solid #eee;">
+                        <h6 style="margin: 0; font-weight: 600;">Chat Negosiasi</h6>
+                        <small style="opacity: 0.9;">Online</small>
+                    </div>
+
+                    <!-- Chat Messages -->
+                    <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 15px; background: #f8f9fa;"></div>
+
+                    <!-- Chat Input -->
+                    <div style="padding: 15px; border-top: 1px solid #eee; background: white;">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="chat-input" placeholder="Ketik pesan Anda..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                            <button onclick="sendMessage()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Kirim</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = chatHTML;
+
+            // Load chat messages
+            await loadChatMessages();
+
+            // Start polling
+            startChatPolling();
+
+            // Setup send button
+            document.getElementById('chat-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        } catch (error) {
+            console.error('Error loading chat:', error);
+            container.innerHTML = '<div style="padding: 20px; color: #f0f0f0; text-align: center;">Gagal memuat chat</div>';
+        }
+    }
+
+    /**
+     * Load chat messages
+     */
+    async function loadChatMessages() {
+        try {
+            const response = await fetch(`/api/barter-messages/${transaction.transaction_id}`, {
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`
+                }
+            });
+
+            if (!response.ok) throw new Error('Failed to load messages');
+
+            const data = await response.json();
+            const container = document.getElementById('chat-messages');
+
+            if (data.success && data.data.messages.length > 0) {
+                let html = '';
+                data.data.messages.forEach(msg => {
+                    const isOwn = msg.is_own;
+                    const timeString = new Date(msg.created_at).toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    html += `
+                        <div style="margin-bottom: 12px; display: flex; ${isOwn ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}">
+                            <div style="max-width: 70%; padding: 10px 15px; border-radius: 10px; background: ${isOwn ? '#667eea' : '#e9ecef'}; color: ${isOwn ? 'white' : '#333'}; word-wrap: break-word;">
+                                <p style="margin: 0 0 5px; font-size: 14px; line-height: 1.4;">${escapeHtml(msg.message_text)}</p>
+                                <small style="opacity: 0.7; font-size: 12px;">${timeString}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            } else {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">Belum ada pesan. Mulai negosiasi sekarang!</div>';
+            }
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+
+    /**
+     * Send message
+     */
+    async function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const messageText = input.value.trim();
+
+        if (!messageText) return;
+
+        try {
+            const response = await fetch('/api/barter-messages/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAuthToken()}`
+                },
+                body: JSON.stringify({
+                    transaction_id: transaction.transaction_id,
+                    message_text: messageText
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to send message');
+
+            input.value = '';
+            await loadChatMessages();
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Gagal mengirim pesan');
+        }
+    }
+
+    /**
+     * Polling untuk chat messages baru
+     */
+    let lastPollTime = new Date();
+    function startChatPolling() {
+        setInterval(async () => {
+            try {
+                const response = await fetch(`/api/barter-messages/${transaction.transaction_id}/recent?since=${lastPollTime.toISOString()}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data.messages.length > 0) {
+                        lastPollTime = new Date();
+                        await loadChatMessages();
+                    }
+                }
+            } catch (error) {
+                console.error('Polling error:', error);
+            }
+        }, 3000); // Poll setiap 3 detik
+    }
+
+    /**
+     * Escape HTML
+     */
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+</script>
+</body>
+</html>

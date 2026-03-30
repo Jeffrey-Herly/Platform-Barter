@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Item</title>
+
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            color: #111827;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .back-button {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 12px;
+        }
+
+        .back-button:hover {
+            background: #f3f4f6;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-input {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            min-width: 220px;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .filter-button {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #4f46e5;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .filter-button:hover {
+            background: #4338ca;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .toggle-button {
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .toggle-button:hover {
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <%- include('../../partials/navbar.ejs', { currentPage: 'admin', isAdminUser: true }) %>
+
+        <div class="main-content">
+            <div class="page-header">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <a href="/admin" class="back-button">
+                        ← Kembali
+                    </a>
+                    <div class="page-title">Manajemen Item</div>
+                </div>
+                <form class="filter-form" method="GET" action="/admin/items">
+                    <input
+                        type="text"
+                        name="search"
+                        class="filter-input"
+                        placeholder="Cari judul atau email pemilik..."
+                        value="<%= search || '' %>"
+                    />
+                    <label class="filter-checkbox">
+                        <input
+                            type="checkbox"
+                            name="onlyInactive"
+                            value="true"
+                            <%= onlyInactive ? 'checked' : '' %>
+                        />
+                        Hanya item nonaktif
+                    </label>
+                    <button type="submit" class="filter-button">Filter</button>
+                </form>
+            </div>
+
+            <% if (error) { %>
+                <div style="background:#fee2e2;color:#b91c1c;padding:10px 12px;border-radius:8px;border:1px solid #fecaca;margin-bottom:16px;font-size:13px;">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Pemilik</th>
+                            <th>Kategori</th>
+                            <th>Tipe</th>
+                            <th>Status</th>
+                            <th>Dibuat</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (items && items.length > 0) { %>
+                            <% items.forEach(function(i) { %>
+                                <tr data-item-id="<%= i.item_id %>">
+                                    <td><%= i.title %></td>
+                                    <td><%= i.owner_name %> (<%= i.owner_email %>)</td>
+                                    <td><%= i.category_name %></td>
+                                    <td><%= i.item_type %></td>
+                                    <td>
+                                        <% if (i.is_available) { %>
+                                            <span class="badge badge-green">Tersedia</span>
+                                        <% } else { %>
+                                            <span class="badge badge-red">Ditutup</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(i.created_at).toLocaleString('id-ID') %></td>
+                                    <td>
+                                        <button
+                                            class="toggle-button js-toggle-item"
+                                            data-available="<%= i.is_available ? '1' : '0' %>"
+                                        >
+                                            <%= i.is_available ? 'Tutup' : 'Buka' %>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7">Tidak ada data item.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.js-toggle-item').forEach(function(btn) {
+                btn.addEventListener('click', async function() {
+                    const row = this.closest('tr');
+                    const itemId = row.getAttribute('data-item-id');
+                    const currentlyAvailable = this.getAttribute('data-available') === '1';
+                    const newStatus = !currentlyAvailable;
+
+                    try {
+                        const res = await fetch('/api/admin/items/' + itemId + '/availability', {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ isAvailable: newStatus })
+                        });
+
+                        const data = await res.json();
+                        if (!res.ok || !data.success) {
+                            alert(data.message || 'Gagal mengubah status item');
+                            return;
+                        }
+
+                        window.location.reload();
+                    } catch (e) {
+                        console.error(e);
+                        alert('Terjadi kesalahan saat mengubah status item');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
