@@ -193,6 +193,54 @@
             opacity: 0.8;
         }
 
+        /* Slider Navigation Buttons */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .slider-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+            border-color: white;
+        }
+
+        .slider-btn.prev { left: 12px; }
+        .slider-btn.next { right: 12px; }
+
+        .slider-counter {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+
         /* Detail Section */
         .detail-section {
             display: flex;
@@ -513,7 +561,12 @@
                             <!-- Main Image -->
                             <div class="main-image" id="mainImage">
                                 <% if (itemData.images && itemData.images.length > 0) { %>
-                                    <img src="<%= itemData.images[0].url %>" alt="<%= itemData.title %>">
+                                    <img id="mainImageImg" src="<%= itemData.images[0].url %>" alt="<%= itemData.title %>" style="position: relative; z-index: 1;">
+                                    <% if (itemData.images.length > 1) { %>
+                                        <button class="slider-btn prev" id="sliderPrev" onclick="slideImage(-1)" title="Sebelumnya">&#10094;</button>
+                                        <button class="slider-btn next" id="sliderNext" onclick="slideImage(1)" title="Berikutnya">&#10095;</button>
+                                        <div class="slider-counter" id="sliderCounter" style="z-index: 50;">1 / <%= itemData.images.length %></div>
+                                    <% } %>
                                 <% } else { %>
                                     📦
                                 <% } %>
@@ -524,10 +577,10 @@
 
                             <!-- Thumbnails -->
                             <% if (itemData.images && itemData.images.length > 1) { %>
-                                <div class="thumbnails">
+                                <div class="thumbnails" id="thumbnailsContainer">
                                     <% itemData.images.forEach((image, index) => { %>
                                         <div class="thumbnail <%= index === 0 ? 'active' : '' %>"
-                                             onclick="changeMainImage('<%= image.url %>', this);">
+                                             onclick="goToSlide(<%= index %>);">
                                             <img src="<%= image.url %>" alt="Image <%= index + 1 %>">
                                         </div>
                                     <% }); %>
@@ -656,20 +709,40 @@
     <script src="/js/navbar.js"></script>
 
     <script>
-        // Change main image
-        function changeMainImage(imageSrc, thumbnail) {
-            const mainImage = document.getElementById('mainImage');
-            const img = mainImage.querySelector('img');
-            if (img) {
-                img.src = imageSrc;
-            }
+        // Image slider state
+        const sliderImages = <%- JSON.stringify((itemData && itemData.images) ? itemData.images.map(i => i.url) : []) %>;
+        let currentSlideIndex = 0;
 
-            // Update active thumbnail
-            document.querySelectorAll('.thumbnail').forEach(t => {
-                t.classList.remove('active');
+        function goToSlide(index) {
+            if (!sliderImages.length) return;
+            currentSlideIndex = (index + sliderImages.length) % sliderImages.length;
+
+            const img = document.getElementById('mainImageImg');
+            if (img) img.src = sliderImages[currentSlideIndex];
+
+            const counter = document.getElementById('sliderCounter');
+            if (counter) counter.textContent = (currentSlideIndex + 1) + ' / ' + sliderImages.length;
+
+            document.querySelectorAll('.thumbnail').forEach((t, i) => {
+                t.classList.toggle('active', i === currentSlideIndex);
             });
-            thumbnail.classList.add('active');
+
+            // Scroll active thumbnail into view
+            const activeThumbnail = document.querySelectorAll('.thumbnail')[currentSlideIndex];
+            if (activeThumbnail) activeThumbnail.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
+
+        function slideImage(direction) {
+            goToSlide(currentSlideIndex + direction);
+        }
+
+        // Keyboard arrow navigation
+        document.addEventListener('keydown', (e) => {
+            if (sliderImages.length > 1) {
+                if (e.key === 'ArrowLeft') slideImage(-1);
+                if (e.key === 'ArrowRight') slideImage(1);
+            }
+        });
 
         // Open barter offer modal
         function openBarterOfferModal(targetItemId, targetItemTitle, ownerId, ownerName) {

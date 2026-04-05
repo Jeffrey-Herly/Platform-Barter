@@ -95,8 +95,13 @@ class TagManager {
       try {
         const tags = JSON.parse(existingTagsJson.dataset.existingTags);
         tags.forEach(tag => {
-          this.selectedTags.push(tag);
-          this.renderTagBadge(tag);
+          const normalizedTag = {
+            tag_id: tag.tag_id || tag.id,
+            tag_name: tag.tag_name || tag.name,
+            is_custom: tag.is_custom !== undefined ? tag.is_custom : (tag.isCustom || false)
+          };
+          this.selectedTags.push(normalizedTag);
+          this.renderTagBadge(normalizedTag);
         });
         this.updateHiddenInput();
         console.log('[TagManager] Loaded', tags.length, 'existing tags');
@@ -142,7 +147,10 @@ class TagManager {
           ${tag.is_custom ? '👤 Personal' : '🌐 Global'}
         </span>
       `;
-      suggestion.addEventListener('click', () => this.addTag(tag));
+      suggestion.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // Prevent input blur
+        this.addTag(tag);
+      });
       this.suggestionsElement.appendChild(suggestion);
     });
 
@@ -165,7 +173,10 @@ class TagManager {
       <span class="tag-name">+ Buat tag baru: "${this.escapeHtml(tagName)}"</span>
       <span class="tag-type custom">👤 Personal</span>
     `;
-    createNew.addEventListener('click', () => this.createAndAddTag(tagName));
+    createNew.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Prevent input blur
+      this.createAndAddTag(tagName);
+    });
     this.suggestionsElement.appendChild(createNew);
     this.suggestionsElement.style.display = 'block';
   }
@@ -210,6 +221,10 @@ class TagManager {
     // Check if already added
     if (this.selectedTags.find(t => t.tag_id === tag.tag_id)) {
       console.warn('[TagManager] Tag already selected');
+      if (this.input) {
+        this.input.value = '';
+        this.input.focus();
+      }
       return;
     }
 
@@ -217,6 +232,11 @@ class TagManager {
     this.renderTagBadge(tag);
     this.updateHiddenInput();
     this.hideSuggestions();
+
+    if (this.input) {
+      this.input.value = '';
+      this.input.focus();
+    }
 
     console.log('[TagManager] Tag added:', tag.tag_name);
   }

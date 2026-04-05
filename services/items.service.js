@@ -114,10 +114,10 @@ class ItemsService {
                         displayOrder: img.display_order
                     })),
                     tags: tags.map(tag => ({
-                        tag_id: tag.tag_id,
-                        tag_name: tag.tag_name,
-                        tag_slug: tag.tag_slug,
-                        is_custom: tag.is_custom
+                        id: tag.tag_id || tag.id,
+                        name: tag.tag_name || tag.name,
+                        slug: tag.tag_slug || tag.slug,
+                        isCustom: tag.is_custom !== undefined ? tag.is_custom : tag.isCustom
                     }))
                 }
             };
