@@ -603,6 +603,77 @@
                 });
             }
 
+            // Filter change events
+            const categoryFilter = document.getElementById('category-filter');
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', function() {
+                    console.log('[Search] Category filter changed');
+                    performSearch();
+                });
+            }
+
+            const allCategories = [
+                <% if (formData && formData.categories) { %>
+                    <% formData.categories.forEach((cat, index) => { %>
+                        { id: '<%= cat.id %>', name: '<%= cat.name %>' }<%= index < formData.categories.length - 1 ? ',' : '' %>
+                    <% }); %>
+                <% } %>
+            ].filter(Boolean);
+
+            const jasaCategories = ['Desain Grafis', 'Jasa Profesional', 'Les Privat', 'Programming'];
+            function isJasaCategory(name) {
+                const lower = name.toLowerCase();
+                return lower.includes('jasa') || lower.includes('tutor') || lower.includes('servis') || jasaCategories.includes(name);
+            }
+
+            const typeFilter = document.getElementById('type-filter');
+            if (typeFilter && categoryFilter) {
+                typeFilter.addEventListener('change', function() {
+                    console.log('[Search] Type filter changed');
+                    
+                    const selectedType = this.options[this.selectedIndex].text.toUpperCase();
+                    const currentCatVal = categoryFilter.value;
+                    
+                    // Save first option 'Semua Kategori'
+                    const defaultOption = categoryFilter.options[0].cloneNode(true);
+                    defaultOption.selected = false;
+                    
+                    categoryFilter.innerHTML = '';
+                    categoryFilter.appendChild(defaultOption);
+                    
+                    let isCurrentCatValid = false;
+                    
+                    allCategories.forEach(cat => {
+                        if (!cat.name) return;
+                        let isJasa = isJasaCategory(cat.name);
+                        let shouldShow = true;
+                        
+                        if (selectedType.includes('JASA')) {
+                            shouldShow = isJasa;
+                        } else if (selectedType.includes('BARANG')) {
+                            shouldShow = !isJasa;
+                        }
+                        
+                        if (shouldShow) {
+                            const opt = document.createElement('option');
+                            opt.value = cat.id;
+                            opt.textContent = cat.name;
+                            categoryFilter.appendChild(opt);
+                            if (cat.id === currentCatVal) isCurrentCatValid = true;
+                        }
+                    });
+
+                    categoryFilter.value = isCurrentCatValid ? currentCatVal : '';
+
+                    performSearch();
+                });
+            } else if (typeFilter) {
+                typeFilter.addEventListener('change', function() {
+                    console.log('[Search] Type filter changed');
+                    performSearch();
+                });
+            }
+
             // Load recommended items on init - with delay to ensure everything is ready
             console.log('[Search] Loading recommended items...');
             setTimeout(() => {

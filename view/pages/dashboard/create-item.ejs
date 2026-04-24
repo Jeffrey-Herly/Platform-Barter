@@ -483,9 +483,61 @@
         let isServiceType = false;
 
         // Update dropdown based on item type
+        const categorySelect = document.getElementById('categoryId');
+        
+        const allCategories = [
+            <% if (formData && formData.categories) { %>
+                <% formData.categories.forEach((cat, index) => { %>
+                    <% if (!cat.parent) { %>
+                    { id: '<%= cat.id %>', name: '<%= cat.name %>' }<%= index < formData.categories.length - 1 ? ',' : '' %>
+                    <% } %>
+                <% }); %>
+            <% } %>
+        ].filter(Boolean);
+
+        const jasaCategories = ['Desain Grafis', 'Jasa Profesional', 'Les Privat', 'Programming'];
+        function isJasaCategory(name) {
+            const lower = name.toLowerCase();
+            return lower.includes('jasa') || lower.includes('tutor') || lower.includes('servis') || jasaCategories.includes(name);
+        }
+
         typeSelect.addEventListener('change', function() {
             const selectedType = this.options[this.selectedIndex];
             const typeName = selectedType ? selectedType.text.toUpperCase() : '';
+
+            // Update Categories based on Type
+            if (categorySelect) {
+                const currentCatVal = categorySelect.value;
+                const defaultCatOption = categorySelect.options[0].cloneNode(true);
+                defaultCatOption.selected = false;
+                
+                categorySelect.innerHTML = '';
+                categorySelect.appendChild(defaultCatOption);
+                
+                let isCurrentCatValid = false;
+                
+                allCategories.forEach(cat => {
+                    if (!cat.name) return;
+                    let isJasa = isJasaCategory(cat.name);
+                    let shouldShow = true;
+                    
+                    if (typeName.includes('JASA')) {
+                        shouldShow = isJasa;
+                    } else if (typeName.includes('BARANG')) {
+                        shouldShow = !isJasa;
+                    }
+                    
+                    if (shouldShow) {
+                        const opt = document.createElement('option');
+                        opt.value = cat.id;
+                        opt.textContent = cat.name;
+                        categorySelect.appendChild(opt);
+                        if (cat.id === currentCatVal) isCurrentCatValid = true;
+                    }
+                });
+
+                categorySelect.value = isCurrentCatValid ? currentCatVal : '';
+            }
 
             // Reset dropdown
             conditionSelect.innerHTML = '<option value="">-- Pilih --</option>';

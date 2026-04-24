@@ -70,8 +70,8 @@ END $$;
 DO $$ 
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM information_schema.statistics 
-        WHERE table_name = 'tags' AND index_name = 'idx_tags_user_id'
+        SELECT 1 FROM pg_indexes 
+        WHERE tablename = 'tags' AND indexname = 'idx_tags_user_id'
     ) THEN
         CREATE INDEX idx_tags_user_id ON public.tags(user_id);
         RAISE NOTICE 'Created idx_tags_user_id index';
@@ -82,8 +82,8 @@ END $$;
 DO $$ 
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM information_schema.statistics 
-        WHERE table_name = 'tags' AND index_name = 'idx_tags_custom_by_user'
+        SELECT 1 FROM pg_indexes 
+        WHERE tablename = 'tags' AND indexname = 'idx_tags_custom_by_user'
     ) THEN
         CREATE INDEX idx_tags_custom_by_user ON public.tags(user_id, is_custom) WHERE is_custom = true;
         RAISE NOTICE 'Created idx_tags_custom_by_user index';
@@ -92,7 +92,6 @@ END $$;
 
 -- Step 8: Update existing global tags - set user_id to NULL and is_custom to false
 UPDATE public.tags SET is_custom = false, user_id = NULL WHERE user_id IS NULL;
-RAISE NOTICE 'Updated existing global tags';
 
 -- Step 9: Add comment for documentation
 COMMENT ON COLUMN public.tags.user_id IS 'User ID for custom personalized tags. NULL for global tags.';

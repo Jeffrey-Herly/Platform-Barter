@@ -189,7 +189,7 @@ async function deleteImageFile(filename) {
     try {
         // Prevent directory traversal attacks
         const resolvedPath = path.resolve(filepath);
-        const resolvedDir = path.resolve(UPLOAD_DIR);
+        const resolvedDir = path.resolve(ITEMS_UPLOAD_DIR);
 
         if (!resolvedPath.startsWith(resolvedDir)) {
             throw new Error('Invalid file path');
