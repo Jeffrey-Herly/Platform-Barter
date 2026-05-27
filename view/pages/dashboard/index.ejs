@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Barterin</title>
+
+    <!-- Webix CSS -->
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix (must be AFTER navbar.css but BEFORE inline styles) -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f3f4f6; /* abu muda, bersih */
+    min-height: 100vh;
+    color: #111827;
+}
+
+/* Layout utama mengikuti navbar.css (.dashboard-container, .sidebar, .main-content) */
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563;
+    font-weight: 600;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-details h3 {
+    color: #111827;
+    margin: 0 0 2px 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.user-details p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 13px;
+}
+
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+    font-size: 20px;
+    color: #4f46e5;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border-radius: 999px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #ffffff;
+    padding: 16px 16px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.stat-icon {
+    font-size: 20px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 2px;
+}
+
+.stat-label {
+    color: #9ca3af;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+/* Content Sections */
+.content-section {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    padding: 18px 18px 16px;
+    margin-bottom: 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.view-all-btn {
+    color: #4f46e5;
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+.view-all-btn:hover {
+    color: #4338ca;
+}
+
+/* Notification List */
+.notification-item {
+    padding: 12px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.notification-item:hover {
+    background: #f3f4ff;
+    border-color: #e0e7ff;
+}
+
+.notification-item.unread {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 13px;
+}
+
+.notification-type {
+    background: #e5e7ff;
+    color: #4338ca;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.notification-message {
+    color: #4b5563;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.notification-time {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+/* Transaction List */
+.transaction-item {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    margin-bottom: 8px;
+}
+
+.transaction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+}
+
+.transaction-user {
+    font-weight: 600;
+    color: #111827;
+    font-size: 13px;
+}
+
+.transaction-status {
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.transaction-status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.transaction-status.negotiating {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.transaction-items {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.transaction-time {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 28px 16px;
+    color: #9ca3af;
+}
+
+.empty-state-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.empty-state-text {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #4b5563;
+}
+
+.empty-state-subtext {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* Alerts */
+.alert {
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.alert-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.alert-success {
+    background: #ecfdf3;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.alert-icon {
+    font-size: 16px;
+}
+
+/* Loading State */
+.loading {
+    text-align: center;
+    padding: 30px 16px;
+    color: #6b7280;
+}
+
+.spinner {
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid #4f46e5;
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        margin-left: 220px;
+        padding: 20px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    /* Mobile styles handled by navbar.css */
+    /* Do not override .sidebar here */
+}
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation Component -->
+        <%- include('../../partials/navbar.ejs', { currentPage: 'dashboard', showReviews: false, isAdminUser: user && user.isAdmin }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <% if (overview && overview.profile && overview.profile.avatar) { %>
+                            <img src="<%= overview.profile.avatar %>" alt="Avatar">
+                        <% } else { %>
+                            <%= overview && overview.profile ? overview.profile.fullName.charAt(0).toUpperCase() : 'U' %>
+                        <% } %>
+                    </div>
+                    <div class="user-details">
+                        <h3><%= overview && overview.profile ? overview.profile.fullName : user.fullName %></h3>
+                        <p><%= overview && overview.profile ? overview.profile.email : user.email %></p>
+                    </div>
+                </div>
+                <div class="notification-bell" onclick="navigateTo('notifications')">
+                    🔔
+                    <% if (overview && overview.recentNotifications) { %>
+                        <% const unreadCount = overview.recentNotifications.filter(n => !n.isRead).length; %>
+                        <% if (unreadCount > 0) { %>
+                            <span class="notification-badge"><%= unreadCount %></span>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <span class="alert-icon">⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <!-- Success Message -->
+            <% if (message) { %>
+                <div class="alert alert-success">
+                    <span class="alert-icon">✓</span>
+                    <span><%= message %></span>
+                </div>
+            <% } %>
+
+            <% if (!overview) { %>
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Memuat data dashboard...</p>
+                </div>
+            <% } else { %>
+                <!-- Statistics Cards -->
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value"><%= overview.statistics.totalItems %></div>
+                        <div class="stat-label">Total Item</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-value"><%= overview.statistics.availableItems %></div>
+                        <div class="stat-label">Item Tersedia</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🤝</div>
+                        <div class="stat-value"><%= overview.statistics.completedBarters %></div>
+                        <div class="stat-label">Barter Selesai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value"><%= (parseFloat(overview.statistics.rating) || 0).toFixed(1) %></div>
+                        <div class="stat-label">Rating</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-value"><%= overview.statistics.wishlistCount %></div>
+                        <div class="stat-label">Wishlist</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💬</div>
+                        <div class="stat-value"><%= overview.statistics.totalReviews %></div>
+                        <div class="stat-label">Review</div>
+                    </div>
+                </div>
+
+                <!-- Recent Notifications -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3 class="section-title">📬 Notifikasi Terbaru</h3>
+                        <a href="#" class="view-all-btn" onclick="navigateTo('notifications'); return false;">Lihat Semua</a>
+                    </div>
+
+                    <% if (overview.recentNotifications && overview.recentNotifications.length > 0) { %>
+                        <% overview.recentNotifications.slice(0, 5).forEach(notif => { %>
+                            <div class="notification-item <%= notif.isRead ? '' : 'unread' %>">
+                                <div class="notification-header">
+                                    <span class="notification-title"><%= notif.title %></span>
+                                    <span class="notification-type"><%= notif.type %></span>
+                                </div>
+                                <p class="notification-message"><%= notif.message %></p>
+                                <span class="notification-time"><%= new Date(notif.createdAt).toLocaleString('id-ID') %></span>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <p class="empty-state-text">Tidak ada notifikasi</p>
+                            <p class="empty-state-subtext">Semua notifikasi Anda akan ditampilkan di sini</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Active Transactions -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3 class="section-title">🤝 Transaksi Aktif</h3>
+                        <a href="#" class="view-all-btn" onclick="navigateTo('items'); return false;">Lihat Semua</a>
+                    </div>
+
+                    <% if (overview.activeTransactions && overview.activeTransactions.length > 0) { %>
+                        <% overview.activeTransactions.slice(0, 3).forEach(trans => { %>
+                            <div class="transaction-item">
+                                <div class="transaction-header">
+                                    <span class="transaction-user"><%= trans.otherUserName %></span>
+                                    <span class="transaction-status <%= trans.status.toLowerCase() %>"><%= trans.status %></span>
+                                </div>
+                                <div class="transaction-items">
+                                    <span>Diminta: <strong><%= trans.requesterItemTitle %></strong></span>
+                                    <span>↔</span>
+                                    <span>Ditawarkan: <strong><%= trans.ownerItemTitle %></strong></span>
+                                </div>
+                                <div class="transaction-time">
+                                    <span><%= trans.role %></span> •
+                                    <span><%= new Date(trans.updatedAt).toLocaleString('id-ID') %></span>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✨</div>
+                            <p class="empty-state-text">Tidak ada transaksi aktif</p>
+                            <p class="empty-state-subtext">Mulai cari item yang Anda inginkan sekarang!</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Your Items Preview -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3 class="section-title">📦 Item Saya</h3>
+                        <a href="#" class="view-all-btn" onclick="navigateTo('items'); return false;">
+                            Lihat Semua (<%= overview.profile.totalItems %>)
+                        </a>
+                    </div>
+
+                    <% if (overview.profile.totalItems > 0) { %>
+                        <p style="text-align: center; color: #999; padding: 40px 20px;">
+                            Anda memiliki <strong><%= overview.profile.totalItems %></strong> item
+                            (<strong><%= overview.profile.availableItems %></strong> tersedia)
+                        </p>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <p class="empty-state-text">Belum ada item</p>
+                            <p class="empty-state-subtext">Mulai tambahkan item barang atau jasa Anda!</p>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Webix JS -->
+    <script src="/webix/webix.min.js"></script>
+
+    <!-- Navbar JS Utilities -->
+    <script src="/js/navbar.js"></script>
+
+    <script>
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard loaded');
+        });
+    </script>
+</body>
+</html>

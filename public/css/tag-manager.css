@@ -1,0 +1,282 @@
+/* ============================================
+   Tag Manager Styles
+   Custom tag input and display
+   ============================================ */
+
+.tag-container {
+    margin-bottom: 20px;
+}
+
+.tag-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.tag-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+#tag-input,
+.tag-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+#tag-input:focus,
+.tag-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#tag-add-btn,
+.tag-add-btn {
+    padding: 10px 16px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#tag-add-btn:hover,
+.tag-add-btn:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+#tag-add-btn:active,
+.tag-add-btn:active {
+    transform: translateY(0);
+}
+
+/* Tag Suggestions Dropdown */
+.tag-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.tag-suggestion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.tag-suggestion:last-child {
+    border-bottom: none;
+}
+
+.tag-suggestion:hover {
+    background: #f8f9fa;
+}
+
+.tag-suggestion.create-new {
+    background: #f0f4ff;
+    border-bottom: 1px solid #667eea;
+    font-weight: 500;
+}
+
+.tag-suggestion.create-new:hover {
+    background: #e8ecff;
+}
+
+.tag-suggestion .tag-name {
+    flex: 1;
+    color: #333;
+    font-size: 14px;
+}
+
+.tag-suggestion .tag-type {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.tag-suggestion .tag-type.custom {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.tag-suggestion .tag-type.global {
+    background: #dbeafe;
+    color: #0c4a6e;
+}
+
+/* Tags List */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    min-height: 32px;
+    align-content: flex-start;
+}
+
+/* Tag Badges */
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #e8ecff;
+    border: 1px solid #667eea;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #333;
+    animation: slideIn 0.2s ease;
+}
+
+.tag-badge.custom {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    color: #78350f;
+}
+
+.tag-badge.global {
+    background: #dbeafe;
+    border-color: #0284c7;
+    color: #0c4a6e;
+}
+
+.tag-badge .tag-text {
+    flex: 1;
+    word-break: break-word;
+}
+
+.tag-badge .tag-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin: 0 -4px 0 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.tag-badge .tag-remove:hover {
+    background: rgba(0, 0, 0, 0.2);
+    transform: scale(1.2);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Helper text */
+.tag-help-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 6px;
+}
+
+.tag-help-text strong {
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tag-input-group {
+        flex-direction: column;
+    }
+
+    #tag-add-btn,
+    .tag-add-btn {
+        width: 100%;
+    }
+
+    .tag-suggestions {
+        max-height: 200px;
+    }
+
+    .tag-badge {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    #tag-input,
+    .tag-input {
+        background: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+
+    #tag-input:focus,
+    .tag-input:focus {
+        border-color: #667eea;
+    }
+
+    .tag-suggestions {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
+    .tag-suggestion {
+        color: #e2e8f0;
+        border-bottom-color: #4a5568;
+    }
+
+    .tag-suggestion:hover {
+        background: #4a5568;
+    }
+
+    .tag-suggestion .tag-name {
+        color: #e2e8f0;
+    }
+
+    .tag-label {
+        color: #e2e8f0;
+    }
+
+    .tag-help-text {
+        color: #a0aec0;
+    }
+}

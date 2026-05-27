@@ -1,0 +1,109 @@
+<!-- Top Navigation Bar (Mobile/Tablet only) -->
+<div class="navbar-top">
+    <button class="hamburger-btn" id="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <h1 class="navbar-title">Barterin</h1>
+    <div class="navbar-spacer"></div>
+</div>
+
+<!-- Sidebar Overlay (Mobile only) -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Sidebar Navigation Component -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>Barterin</h2>
+    </div>
+
+    <div class="sidebar-nav">
+
+        <!-- DASHBOARD -->
+        <a href="/dashboard/" class="nav-item <%= currentPage === 'dashboard' ? 'active' : '' %>" data-page="dashboard">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-columns"></span>
+            </span>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- CARI ITEM -->
+        <a href="/items/search" class="nav-item <%= currentPage === 'search' ? 'active' : '' %>" data-page="search">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-search"></span>
+            </span>
+            <span>Cari Item</span>
+        </a>
+
+        <!-- PROFIL -->
+        <a href="/dashboard/profile" class="nav-item <%= currentPage === 'profile' ? 'active' : '' %>"
+            data-page="profile">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-user"></span>
+            </span>
+            <span>Profil Saya</span>
+        </a>
+
+        <!-- ITEM SAYA -->
+        <a href="/dashboard/items" class="nav-item <%= currentPage === 'items' ? 'active' : '' %>" data-page="items">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-folder"></span>
+            </span>
+            <span>Item Saya</span>
+        </a>
+
+        <!-- NOTIFIKASI -->
+        <a href="/dashboard/notifications" class="nav-item <%= currentPage === 'notifications' ? 'active' : '' %>"
+            data-page="notifications">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-alert"></span>
+            </span>
+            <span>Notifikasi</span>
+        </a>
+
+        <!-- PERCAKAPAN -->
+        <a href="/conversations/page" class="nav-item <%= currentPage === 'conversations' ? 'active' : '' %>"
+            data-page="conversations">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-pencil"></span>
+            </span>
+            <span>Percakapan</span>
+        </a>
+
+        <!-- WISHLIST -->
+        <a href="/dashboard/wishlist" class="nav-item <%= currentPage === 'wishlist' ? 'active' : '' %>"
+            data-page="wishlist">
+            <span class="nav-icon">
+                <span class="webix_icon wxi-plus-circle"></span>
+            </span>
+            <span>Wishlist</span>
+        </a>
+
+        <!-- ULASAN (KONDISIONAL) -->
+        <% if (typeof showReviews !=='undefined' && showReviews) { %>
+            <a href="/dashboard/reviews" class="nav-item <%= currentPage === 'reviews' ? 'active' : '' %>"
+                data-page="reviews">
+                <span class="nav-icon">
+                    <span class="webix_icon wxi-file"></span>
+                </span>
+                <span>Ulasan</span>
+            </a>
+            <% } %>
+
+        <!-- ADMIN (hanya jika flag isAdminUser dikirim dari view) -->
+        <% if (typeof isAdminUser !== 'undefined' && isAdminUser) { %>
+            <a href="/admin" class="nav-item <%= currentPage === 'admin' ? 'active' : '' %>" data-page="admin">
+                <span class="nav-icon">
+                    <span class="webix_icon wxi-cog"></span>
+                </span>
+                <span>Admin</span>
+            </a>
+        <% } %>
+
+    </div>
+
+    <div class="sidebar-footer">
+        <button class="logout-btn" id="logout-btn">Keluar</button>
+    </div>
+</div>

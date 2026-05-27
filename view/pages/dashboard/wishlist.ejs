@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist - Barterin</title>
+
+    <!-- Webix CSS -->
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        /* Layout utama mengikuti navbar.css (.dashboard-container, .sidebar, .main-content) */
+
+        .page-title {
+            color: #111827;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-wishlist-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .item-content {
+            padding: 15px;
+        }
+
+        .item-category {
+            color: #667eea;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .item-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-description {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .item-owner {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .owner-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .item-views {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item-footer {
+            display: flex;
+            gap: 8px;
+        }
+
+        .item-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5568d3;
+        }
+
+        .btn-remove {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-remove:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state-subtext {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .empty-state-btn:hover {
+            background: #5568d3;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .item-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <%- include('../../partials/navbar.ejs', { currentPage: 'wishlist', showReviews: false, isAdminUser: user && user.isAdmin }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1 class="page-title">❤️ Wishlist Saya</h1>
+
+            <!-- Error Alert -->
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <span>⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <!-- Items Grid -->
+            <% if (wishlistData && wishlistData.items && wishlistData.items.length > 0) { %>
+                <div class="items-grid">
+                    <% wishlistData.items.forEach(item => { %>
+                        <div class="item-card">
+                            <div class="item-image">
+                                <% if (item.primaryImage) { %>
+                                    <img src="<%= item.primaryImage %>" alt="<%= item.title %>">
+                                <% } else { %>
+                                    📦
+                                <% } %>
+                                <div class="item-wishlist-badge">❤️ Wishlist</div>
+                            </div>
+
+                            <div class="item-content">
+                                <div class="item-category"><%= item.categoryName %></div>
+                                <h3 class="item-title"><%= item.title %></h3>
+                                <p class="item-description"><%= item.description %></p>
+
+                                <div class="item-owner">
+                                    👤 <span class="owner-name"><%= item.ownerName %></span>
+                                </div>
+
+                                <div class="item-meta">
+                                    <span class="item-views">👁️ <%= item.viewCount %> views</span>
+                                </div>
+
+                                <div class="item-footer">
+                                    <button class="item-btn btn-view" onclick="window.location.href='/items/<%= item.itemId %>';">Lihat</button>
+                                    <button class="item-btn btn-remove" onclick="removeFromWishlist('<%= item.id %>'); return false;">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- Pagination Info -->
+                <% if (wishlistData.totalCount > wishlistData.items.length) { %>
+                    <div style="text-align: center; color: white; margin-top: 20px;">
+                        Menampilkan <%= wishlistData.items.length %> dari <%= wishlistData.totalCount %> item wishlist
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">❤️</div>
+                    <p class="empty-state-text">Wishlist Anda kosong</p>
+                    <p class="empty-state-subtext">Mulai tambahkan item ke wishlist Anda dengan mengklik tombol hati saat melihat item</p>
+                    <button class="empty-state-btn" onclick="window.location.href='/items/';">Jelajahi Item</button>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Webix JS -->
+    <script src="/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+
+    <script>
+        // Remove from wishlist
+        function removeFromWishlist(wishlistId) {
+            if (confirm('Apakah Anda yakin ingin menghapus item dari wishlist?')) {
+                fetch(`/api/dashboard/wishlist/${wishlistId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Item berhasil dihapus dari wishlist');
+                        // Reload wishlist atau hapus item dari UI
+                        window.location.href = '/dashboard/wishlist';
+                    } else {
+                        alert('Gagal menghapus item: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus item dari wishlist');
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Wishlist page loaded');
+        });
+    </script>
+</body>
+</html>

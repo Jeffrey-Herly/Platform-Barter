@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - Platform Barter</title>
+
+    <!-- Webix CSS -->
+    <link rel="stylesheet" href="/webix/webix.min.css">
+    <link rel="stylesheet" href="/webix/skins/material.css">
+
+    <script src="/webix/webix.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .page-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .register-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 0;
+        }
+
+        .brand-subtitle {
+            color: #666;
+            margin: 10px 0 0 0;
+            font-size: 16px;
+        }
+
+        /* Password requirements */
+        .password-requirements {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .password-requirements ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .password-requirements li {
+            margin: 5px 0;
+        }
+
+        .password-requirements .requirement {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .password-requirements .requirement-icon {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .requirement-icon.valid {
+            color: #22c55e;
+        }
+
+        .requirement-icon.invalid {
+            color: #ef4444;
+        }
+
+        /* Tombol Register */
+        .register-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-sizing: border-box;
+        }
+
+        .register-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+
+        .register-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Tombol Login */
+        .login-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .login-btn:hover {
+            background: #f0f4ff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Divider */
+        .divider-text {
+            text-align: center;
+            color: #999;
+            margin: 20px 0 15px 0;
+            font-size: 14px;
+        }
+
+        /* Links */
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .auth-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+
+        /* Error messages */
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Success messages */
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2e7d32;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="register-card">
+            <div class="brand">
+                <h1 class="brand-title">🔄 Barter</h1>
+                <p class="brand-subtitle">Buat Akun Baru</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error-message" class="error-message"></div>
+
+            <!-- Success Message -->
+            <div id="success-message" class="success-message"></div>
+
+            <!-- Webix Form Container -->
+            <div id="register-form"></div>
+
+            <!-- Tombol Register dan Login -->
+            <button class="register-btn" id="register-btn" onclick="handleRegister(event)">Daftar Akun</button>
+
+            <!-- Divider -->
+            <div class="divider-text">atau</div>
+
+            <!-- Links tambahan -->
+            <div class="auth-links">
+                <a href="/auth/">Kembali ke Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let registerForm;
+
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            document.getElementById('success-message').classList.remove('show');
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-message');
+            successEl.textContent = message;
+            successEl.classList.add('show');
+            document.getElementById('error-message').classList.remove('show');
+        }
+
+        // Clear messages
+        function clearMessages() {
+            document.getElementById('error-message').classList.remove('show');
+            document.getElementById('success-message').classList.remove('show');
+        }
+
+        // Handle registration
+        async function handleRegister(event) {
+            event.preventDefault();
+            clearMessages();
+
+            if (!registerForm) {
+                showError('Form tidak ditemukan!');
+                return;
+            }
+
+            // Validasi form
+            if (!registerForm.validate()) {
+                showError('Mohon isi semua field yang diperlukan dengan benar!');
+                return;
+            }
+
+            const values = registerForm.getValues();
+            const registerBtn = document.getElementById('register-btn');
+
+            // Validasi password
+            if (values.password.length < 8) {
+                showError('Password minimal 8 karakter!');
+                return;
+            }
+
+            if (values.password !== values.password_confirm) {
+                showError('Password dan konfirmasi password tidak sama!');
+                return;
+            }
+
+            // Disable tombol
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Sedang mendaftar...';
+
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: values.email.trim().toLowerCase(),
+                        password: values.password,
+                        full_name: values.full_name.trim(),
+                        phone_number: values.phone_number ? values.phone_number.trim() : ''
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.emailSent) {
+                        // Email verification required
+                        showSuccess(result.message || 'Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi.');
+
+                        // Show additional info
+                        setTimeout(() => {
+                            const successBox = document.getElementById('success-message');
+                            successBox.innerHTML = `
+                                <strong>✅ Registrasi Berhasil!</strong><br><br>
+                                Email verifikasi telah dikirim ke: <strong>${result.data.email}</strong><br><br>
+                                <small>
+                                    • Silakan cek inbox atau folder spam<br>
+                                    • Link verifikasi berlaku selama 24 jam<br>
+                                    • Setelah verifikasi, Anda dapat login
+                                </small>
+                            `;
+                        }, 500);
+
+                        // Hide register form
+                        registerForm.hide();
+                        registerBtn.style.display = 'none';
+                    } else {
+                        // No email verification (legacy)
+                        showSuccess('Pendaftaran berhasil! Mengalihkan ke dashboard...');
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 2000);
+                    }
+                } else {
+                    showError(result.message || 'Pendaftaran gagal. Coba lagi!');
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = 'Daftar Akun';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Gagal menghubungi server. Coba lagi!');
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Daftar Akun';
+            }
+        }
+
+        webix.ready(function() {
+            // Buat form register
+            registerForm = webix.ui({
+                view: "form",
+                container: "register-form",
+                borderless: true,
+                elements: [
+                    {
+                        view: "text",
+                        label: "Nama Lengkap",
+                        name: "full_name",
+                        labelPosition: "top",
+                        placeholder: "Contoh: Budi Santoso",
+                        required: true,
+                        invalidMessage: "Nama tidak valid"
+                    },
+                    {
+                        view: "text",
+                        label: "Email",
+                        name: "email",
+                        labelPosition: "top",
+                        placeholder: "contoh@email.com",
+                        required: true,
+                        invalidMessage: "Email tidak valid"
+                    },
+                    {
+                        view: "text",
+                        label: "Nomor Telepon (Opsional)",
+                        name: "phone_number",
+                        labelPosition: "top",
+                        placeholder: "08123456789",
+                        required: false
+                    },
+                    {
+                        view: "text",
+                        type: "password",
+                        label: "Password",
+                        name: "password",
+                        labelPosition: "top",
+                        placeholder: "Minimal 8 karakter",
+                        required: true,
+                        invalidMessage: "Password harus minimal 8 karakter"
+                    },
+                    {
+                        view: "text",
+                        type: "password",
+                        label: "Konfirmasi Password",
+                        name: "password_confirm",
+                        labelPosition: "top",
+                        placeholder: "Ulangi password",
+                        required: true,
+                        invalidMessage: "Konfirmasi password harus diisi"
+                    }
+                ]
+            });
+        });
+
+        // Enter key untuk submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                handleRegister(e);
+            }
+        });
+    </script>
+</body>
+</html>

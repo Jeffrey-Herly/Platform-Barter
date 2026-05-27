@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Percakapan - Barterin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f3f4f6;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #666;
+            margin: 10px 0 0;
+            font-size: 14px;
+        }
+
+        .conversations-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .conversation-item-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 18px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s;
+        }
+
+        .conversation-item-wrapper:hover {
+            background: #f8f9fa;
+            padding-left: 25px;
+        }
+
+        .conversation-item-wrapper:last-child {
+            border-bottom: none;
+        }
+
+        .conversation-item {
+            flex: 1;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .conversation-item:hover {
+            /* hover styling handled by wrapper */
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #ddd;
+        }
+
+        .conversation-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+
+        .conversation-partner {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .conversation-time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .conversation-message {
+            color: #666;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 5px;
+        }
+
+        .conversation-message.unread {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .conversation-status {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .status-pending {
+            background: #ffeaa7;
+            color: #2d3436;
+        }
+
+        .status-accepted {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        .status-rejected {
+            background: #fab1a0;
+            color: #d63031;
+        }
+
+        .unread-badge {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .conversation-delete-btn {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .conversation-delete-btn:hover {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .conversation-delete-btn:active {
+            background: #ffdddd;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h5 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin: 0;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+
+        .pagination-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            color: white;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .page-container {
+                margin: 0 10px;
+            }
+
+            .conversation-item {
+                padding: 15px;
+            }
+
+            .conversation-avatar {
+                width: 40px;
+                height: 40px;
+            }
+
+            .conversation-partner {
+                font-size: 14px;
+            }
+
+            .conversation-time {
+                font-size: 12px;
+            }
+
+            .status-badge {
+                padding: 3px 8px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <!-- Header -->
+    <div class="header">
+        <button class="btn btn-link" onclick="window.history.back()" style="padding: 0; color: #667eea; margin-bottom: 10px;">
+            ← Kembali
+        </button>
+        <h1>
+            <i class="fas fa-comments"></i> Percakapan Saya
+        </h1>
+        <p>
+            <% if (conversationsList && conversationsList.length > 0) { %>
+                <%= pagination.total %> percakapan
+            <% } %>
+        </p>
+    </div>
+
+    <!-- Error Message -->
+    <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Conversations List -->
+    <% if (conversationsList && conversationsList.length > 0) { %>
+        <div class="conversations-list">
+            <%
+                // Helper function untuk format time
+                const getTimeString = (date) => {
+                    const now = new Date();
+                    const diff = now - date;
+                    const seconds = Math.floor(diff / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const hours = Math.floor(minutes / 60);
+                    const days = Math.floor(hours / 24);
+
+                    if (seconds < 60) return 'Baru saja';
+                    if (minutes < 60) return minutes + 'm lalu';
+                    if (hours < 24) return hours + 'h lalu';
+                    if (days < 7) return days + 'd lalu';
+
+                    return date.toLocaleDateString('id-ID', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                };
+
+                conversationsList.forEach(conv => {
+                    const lastMsgTime = conv.last_message_created_at ? new Date(conv.last_message_created_at) : new Date(conv.transaction_updated_at);
+                    const timeString = getTimeString(lastMsgTime);
+                    const messagePreview = conv.last_message_text || '(tidak ada pesan)';
+                    const isUnread = conv.unread_count > 0;
+            %>
+                <div class="conversation-item-wrapper">
+                    <a href="/barter/<%= conv.transaction_id %>/page" class="conversation-item">
+                        <!-- Avatar -->
+                        <img src="<%= conv.partner_avatar %>" alt="<%= conv.partner_name %>" class="conversation-avatar">
+
+                        <!-- Content -->
+                        <div class="conversation-content">
+                            <div class="conversation-header">
+                                <span class="conversation-partner"><%= conv.partner_name %></span>
+                                <span class="conversation-time"><%= timeString %></span>
+                            </div>
+                            <div class="conversation-message <%= isUnread ? 'unread' : '' %>">
+                                <% if (conv.last_message_from_partner && isUnread) { %>
+                                    <i class="fas fa-arrow-left"></i>
+                                <% } %>
+                                <%= messagePreview.substring(0, 60) %><%= messagePreview.length > 60 ? '...' : '' %>
+                            </div>
+                            <div class="conversation-status">
+                                <span class="status-badge status-<%= conv.status_name.toLowerCase() %>">
+                                    <%= conv.status_name %>
+                                </span>
+                                <span style="color: #999;">
+                                    <% const myItem = currentUser.userId === conv.requester_id ? conv.requester_item_title : conv.owner_item_title; %>
+                                    <i class="fas fa-cube"></i> <%= myItem %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Unread Badge -->
+                        <% if (isUnread) { %>
+                            <div class="unread-badge"><%= conv.unread_count %></div>
+                        <% } %>
+                    </a>
+
+                    <!-- Delete Button -->
+                    <button class="conversation-delete-btn" onclick="deleteConversation('<%= conv.transaction_id %>', event)" title="Hapus percakapan">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (pagination.pages > 1) { %>
+            <div class="pagination-container">
+                <% if (pagination.page > 1) { %>
+                    <a href="?offset=<%= (pagination.page - 2) * pagination.limit %>" class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i> Sebelumnya
+                    </a>
+                <% } else { %>
+                    <button class="pagination-btn" disabled>
+                        <i class="fas fa-chevron-left"></i> Sebelumnya
+                    </button>
+                <% } %>
+
+                <% if (pagination.page < pagination.pages) { %>
+                    <a href="?offset=<%= pagination.page * pagination.limit %>" class="pagination-btn">
+                        Selanjutnya <i class="fas fa-chevron-right"></i>
+                    </a>
+                <% } else { %>
+                    <button class="pagination-btn" disabled>
+                        Selanjutnya <i class="fas fa-chevron-right"></i>
+                    </button>
+                <% } %>
+            </div>
+
+            <div class="pagination-info">
+                Halaman <%= pagination.page %> dari <%= pagination.pages %>
+            </div>
+        <% } %>
+
+    <% } else { %>
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h5>Belum Ada Percakapan</h5>
+            <p>Mulai percakapan dengan membuat penawaran barter untuk item pilihan Anda</p>
+            <a href="/dashboard/items" class="btn btn-primary mt-3">
+                <i class="fas fa-search"></i> Cari Item untuk Ditukar
+            </a>
+        </div>
+    <% } %>
+</div>
+
+<script>
+    // Untuk potential future client-side functionality
+    const currentUser = <%- JSON.stringify(currentUser) %>;
+
+    /**
+     * Delete conversation
+     */
+    async function deleteConversation(transactionId, event) {
+        event.stopPropagation(); // Prevent link click
+
+        if (!confirm('Apakah Anda yakin ingin menghapus percakapan ini?\n\nCatatan: Percakapan tidak akan hilang untuk partner Anda, dan chat history tetap tersimpan.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/conversations/${transactionId}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert('❌ Gagal menghapus percakapan: ' + (data.message || 'Unknown error'));
+                return;
+            }
+
+            alert('✅ Percakapan berhasil dihapus');
+            // Remove the conversation item from UI
+            const wrapper = event.target.closest('.conversation-item-wrapper');
+            if (wrapper) {
+                wrapper.style.opacity = '0';
+                wrapper.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    wrapper.remove();
+                    // Reload page if no conversations left
+                    const convList = document.querySelector('.conversations-list');
+                    if (convList && convList.children.length === 0) {
+                        location.reload();
+                    }
+                }, 300);
+            }
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+            alert('❌ Terjadi kesalahan: ' + error.message);
+        }
+    }
+
+    /**
+     * Get auth token from storage
+     */
+    function getAuthToken() {
+        return localStorage.getItem('authToken') ||
+               sessionStorage.getItem('authToken') ||
+               document.cookie.split(';').find(c => c.includes('token'))?.split('=')[1] ||
+               '';
+    }
+</script>
+</body>
+</html>
