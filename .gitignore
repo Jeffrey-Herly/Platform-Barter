@@ -36,8 +36,6 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# 0x
-profile-*
 
 # mac files
 .DS_Store
@@ -51,11 +49,6 @@ profile-*
 # vscode
 .vscode
 *code-workspace
-
-# clinic
-profile*
-*clinic*
-*flamegraph*
 
 # environment variables
 .env

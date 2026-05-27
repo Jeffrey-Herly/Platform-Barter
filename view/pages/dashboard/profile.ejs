@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya - Barterin</title>
+
+    <!-- Webix CSS -->
+    <link rel="stylesheet" type="text/css" href="/webix/webix.min.css">
+    <link rel="stylesheet" type="text/css" href="/webix/skins/webix.flat.css">
+    <link rel="stylesheet" type="text/css" href="/css/navbar.css">
+    
+    <!-- Mobile Responsive Fix -->
+    <link rel="stylesheet" type="text/css" href="/css/mobile-responsive-fix.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+
+        /* Layout utama mengikuti navbar.css (.dashboard-container, .sidebar, .main-content) */
+
+        .page-title {
+            color: #111827;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* Profile Card */
+        .profile-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            border: 4px solid white;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .profile-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .profile-action-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: rgba(243, 244, 246, 0.9);
+            color: #111827;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .profile-action-btn:hover {
+            background: rgba(229, 231, 235, 0.95);
+            transform: translateY(-1px);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Form */
+        .profile-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .review-item {
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .review-rating {
+            font-size: 14px;
+            color: #ffc107;
+        }
+
+        .review-text {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .review-date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .profile-header {
+                padding: 30px 20px;
+            }
+
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 20px;
+            }
+
+            .profile-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <%- include('../../partials/navbar.ejs', { currentPage: 'profile', showReviews: !isPublicView, isAdminUser: user && user.isAdmin }) %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1 class="page-title">👤 Profil Saya</h1>
+
+            <!-- Error Alert -->
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <span>⚠️</span>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <!-- Success Alert -->
+            <% if (message) { %>
+                <div class="alert alert-success">
+                    <span>✓</span>
+                    <span><%= message %></span>
+                </div>
+            <% } %>
+
+            <% if (profile) { %>
+                <!-- Profile Header -->
+                <div class="profile-container">
+                    <div class="profile-header" style="<% if (profile.cover) { %>background-image: url('<%= profile.cover %>'); background-size: cover; background-position: center; color: white;<% } else { %>background-color: #f0f0f0;<% } %>">
+                        <div class="profile-avatar">
+                            <% if (profile.avatar) { %>
+                                <img src="<%= profile.avatar %>" alt="Avatar">
+                            <% } else { %>
+                                <%= profile.fullName.charAt(0).toUpperCase() %>
+                            <% } %>
+                        </div>
+                        <div class="profile-name"><%= profile.fullName %></div>
+                        <div class="profile-email"><%= profile.email %></div>
+
+                        <% if (!isPublicView) { %>
+                            <div class="profile-actions">
+                                <form method="POST" action="/dashboard/profile/upload-avatar" enctype="multipart/form-data" style="display:inline;">
+                                    <button type="button" class="profile-action-btn" onclick="this.parentElement.querySelector('input[type=file]').click()">
+                                        Ubah Foto Profil
+                                    </button>
+                                    <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;" onchange="this.form.submit()">
+                                </form>
+                                <form method="POST" action="/dashboard/profile/upload-cover" enctype="multipart/form-data" style="display:inline;">
+                                    <button type="button" class="profile-action-btn" onclick="this.parentElement.querySelector('input[type=file]').click()">
+                                        Ubah Header
+                                    </button>
+                                    <input type="file" name="cover" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;" onchange="this.form.submit()">
+                                </form>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <div class="stat-value"><%= profile.totalItems %></div>
+                            <div class="stat-label">Total Item</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value"><%= (parseFloat(profile.rating) || 0).toFixed(1) %></div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value"><%= profile.totalRatings %></div>
+                            <div class="stat-label">Rater</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value"><%= profile.totalSuccessfulBarters %></div>
+                            <div class="stat-label">Barter Selesai</div>
+                        </div>
+                    </div>
+
+                    <% if (isPublicView) { %>
+                    <!-- Read-only contact info for public profile view -->
+                    <div class="profile-form" style="padding-top: 0;">
+                        <h3 style="margin-bottom: 16px; color: #333;">Informasi Kontak</h3>
+
+                        <div class="form-group">
+                            <label>Alamat</label>
+                            <div><%= profile.address || '-' %></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Kota</label>
+                                <div><%= profile.city || '-' %></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Provinsi</label>
+                                <div><%= profile.province || '-' %></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kode Pos</label>
+                            <div><%= profile.postalCode || '-' %></div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if (!isPublicView) { %>
+                    <!-- Edit Profile Form (hanya profil sendiri) -->
+                    <div class="profile-form">
+                        <h3 style="margin-bottom: 20px; color: #333;">Edit Informasi Profil</h3>
+
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label>Nama Lengkap</label>
+                                <input type="text" value="<%= profile.fullName %>" disabled style="background: #f5f5f5; cursor: not-allowed;">
+                                <small style="color: #999;">Nama tidak bisa diubah di sini</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" value="<%= profile.email %>" disabled style="background: #f5f5f5; cursor: not-allowed;">
+                                <small style="color: #999;">Email tidak bisa diubah di sini</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>No. Telepon</label>
+                                <input type="tel" value="<%= profile.phoneNumber || '' %>" disabled style="background: #f5f5f5; cursor: not-allowed;">
+                                <small style="color: #999;">No. telepon tidak bisa diubah di sini</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea name="bio" placeholder="Ceritakan tentang diri Anda..."><%= profile.bio || '' %></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Alamat</label>
+                                    <input type="text" name="address" value="<%= profile.address || '' %>" placeholder="Jalan, No. Rumah">
+                                </div>
+                                <div class="form-group">
+                                    <label>Kota</label>
+                                    <input type="text" name="city" value="<%= profile.city || '' %>" placeholder="Nama Kota">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Provinsi</label>
+                                    <input type="text" name="province" value="<%= profile.province || '' %>" placeholder="Nama Provinsi">
+                                </div>
+                                <div class="form-group">
+                                    <label>Kode Pos</label>
+                                    <input type="text" name="postal_code" value="<%= profile.postalCode || '' %>" placeholder="12345">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="save-btn">Simpan Perubahan</button>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="reviews-section">
+                    <% if (isPublicView && user && user.userId !== profile.userId) { %>
+                        <!-- Form tambah review untuk profil orang lain -->
+                        <div class="profile-form" style="margin-bottom: 20px; padding-top: 0; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 10px 0; color: #111827;">Beri Review untuk <%= profile.fullName %></h3>
+                            <form id="addReviewForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Rating</label>
+                                        <div id="ratingSelectWidget" style="max-width:220px;"></div>
+                                        <input type="hidden" name="rating" value="5">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ulasan (opsional)</label>
+                                    <textarea name="review_text" placeholder="Tulis ulasan Anda..."></textarea>
+                                </div>
+                                <button type="submit" class="save-btn">Kirim Review</button>
+                            </form>
+                        </div>
+
+                        <!-- Form laporkan pengguna (compact) -->
+                        <div class="profile-form" style="margin-bottom: 16px; padding: 12px 16px; border: 1px solid #fee2e2; border-radius: 8px; background: #fef2f2;">
+                            <div style="display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;">
+                                <select id="reportTypeSelect" style="flex:0 0 180px; padding: 6px 8px; border-radius: 6px; border: 1px solid #fecaca; background: #fff; font-size: 13px;">
+                                    <option value="FRAUD">Penipuan</option>
+                                    <option value="SPAM">Spam</option>
+                                    <option value="HARASSMENT">Pelecehan</option>
+                                    <option value="INAPPROPRIATE_CONTENT">Konten tidak pantas</option>
+                                    <option value="OTHER">Lainnya</option>
+                                </select>
+                                <input
+                                    id="reportText"
+                                    type="text"
+                                    placeholder="Singkat saja, apa masalahnya?"
+                                    style="flex:1 1 auto; min-width:160px; padding: 6px 8px; border-radius: 6px; border: 1px solid #fecaca; background:#fff; font-size:13px;"
+                                />
+                                <button
+                                    type="button"
+                                    id="reportUserBtn"
+                                    class="save-btn"
+                                    style="padding:8px 14px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); font-size:13px; white-space:nowrap;"
+                                >
+                                    Laporkan
+                                </button>
+                            </div>
+                            <div style="margin-top:4px;">
+                                <span id="reportSendingLabel" style="font-size: 12px; color: #6b7280;"></span>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 class="section-title">⭐ Review dari Pengguna Lain</h3>
+                        <% if (reviews && reviews.length > 0) { %>
+                            <a href="/dashboard/reviews" style="
+                                display: inline-block;
+                                padding: 8px 16px;
+                                background: #667eea;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 4px;
+                                font-size: 13px;
+                                font-weight: 600;
+                                transition: all 0.3s;
+                            " onmouseover="this.style.background='#5568d3'; this.style.boxShadow='0 4px 8px rgba(102,126,234,0.3)'"
+                               onmouseout="this.style.background='#667eea'; this.style.boxShadow='none'">
+                                Lihat Semua →
+                            </a>
+                        <% } %>
+                    </div>
+
+                    <% if (reviews && reviews.length > 0) { %>
+                        <% reviews.forEach(review => { %>
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <span class="reviewer-name"><%= review.reviewerName %></span>
+                                    <span class="review-rating">
+                                        <%= '⭐'.repeat(review.rating) %>
+                                    </span>
+                                </div>
+                                <p class="review-text"><%= review.text || '(Tidak ada komentar)' %></p>
+                                <div class="review-date">
+                                    <%= new Date(review.createdAt).toLocaleString('id-ID') %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <div class="empty-state-icon">⭐</div>
+                            <p class="empty-state-text">Belum ada review</p>
+                            <p class="empty-state-subtext">Review dari pengguna lain akan ditampilkan di sini setelah transaksi barter selesai</p>
+                        </div>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <p class="empty-state-text">Memuat profil...</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Webix JS -->
+    <script src="/webix/webix.min.js"></script>
+    <script src="/js/navbar.js"></script>
+
+    <script>
+        // Profile form submission (only for own profile, not public view)
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+        profileForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                bio: document.querySelector('textarea[name="bio"]').value,
+                address: document.querySelector('input[name="address"]').value,
+                city: document.querySelector('input[name="city"]').value,
+                province: document.querySelector('input[name="province"]').value,
+                postal_code: document.querySelector('input[name="postal_code"]').value
+            };
+
+            const submitBtn = this.querySelector('.save-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+
+            try {
+                const response = await fetch('/api/dashboard/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success message
+                    alert('Profil berhasil diperbarui!');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    alert('Gagal memperbarui profil: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menyimpan profil');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan Perubahan';
+            }
+        });
+        }
+
+        // Add review form submission (only on public profile)
+        const addReviewForm = document.getElementById('addReviewForm');
+        if (addReviewForm) {
+            const reviewedUserId = '<%= profile.userId %>';
+
+            addReviewForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(addReviewForm);
+                const rating = formData.get('rating');
+                const reviewText = formData.get('review_text') || '';
+                const submitBtn = addReviewForm.querySelector('.save-btn');
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Mengirim...';
+
+                try {
+                    const response = await fetch(`/api/users/${reviewedUserId}/reviews`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ rating, reviewText })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(result.message || 'Review berhasil dikirim');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        alert(result.message || 'Gagal mengirim review');
+                    }
+                } catch (error) {
+                    console.error('Error kirim review:', error);
+                    alert('Terjadi kesalahan saat mengirim review');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Kirim Review';
+                }
+            });
+
+            // Tambah handler untuk tombol "Laporkan Pengguna"
+            const reportBtn = document.getElementById('reportUserBtn');
+            const reportTypeSelect = document.getElementById('reportTypeSelect');
+            const reportText = document.getElementById('reportText');
+            const reportSendingLabel = document.getElementById('reportSendingLabel');
+            if (reportBtn && reportTypeSelect && reportText) {
+                reportBtn.addEventListener('click', async function() {
+                    const type = reportTypeSelect.value || 'FRAUD';
+                    const description = reportText.value || '';
+
+                    if (!description || description.trim().length < 10) {
+                        alert('Mohon jelaskan laporan minimal 10 karakter.');
+                        return;
+                    }
+
+                    reportBtn.disabled = true;
+                    if (reportSendingLabel) {
+                        reportSendingLabel.textContent = 'Mengirim laporan...';
+                    }
+
+                    try {
+                        const response = await fetch(`/api/users/${reviewedUserId}/report`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ type, description })
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            alert(result.message || 'Laporan berhasil dikirim');
+                            reportText.value = '';
+                        } else {
+                            alert(result.message || 'Gagal mengirim laporan');
+                        }
+                    } catch (error) {
+                        console.error('Error kirim laporan:', error);
+                        alert('Terjadi kesalahan saat mengirim laporan');
+                    } finally {
+                        reportBtn.disabled = false;
+                        if (reportSendingLabel) {
+                            reportSendingLabel.textContent = '';
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Profile page loaded');
+
+            // Inisialisasi Webix richselect untuk rating (tanpa widget bintang)
+            if (window.webix && document.getElementById('ratingSelectWidget')) {
+                const hiddenRatingInput = document.querySelector('#addReviewForm input[name=\"rating\"]');
+                const initial = hiddenRatingInput ? parseInt(hiddenRatingInput.value, 10) || 5 : 5;
+
+                webix.ui({
+                    view: 'richselect',
+                    container: 'ratingSelectWidget',
+                    value: initial,
+                    css: 'profile-rating-select',
+                    width: 200,
+                    options: [
+                        { id: 5, value: '5 - Sangat Puas' },
+                        { id: 4, value: '4 - Puas' },
+                        { id: 3, value: '3 - Cukup' },
+                        { id: 2, value: '2 - Kurang' },
+                        { id: 1, value: '1 - Sangat Buruk' }
+                    ],
+                    on: {
+                        onChange: function (value) {
+                            const v = parseInt(value, 10) || 5;
+                            if (hiddenRatingInput) {
+                                hiddenRatingInput.value = String(v);
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Show query param messages (from native form upload redirect)
+            var urlParams = new URLSearchParams(window.location.search);
+            var msg = urlParams.get('message');
+            var err = urlParams.get('error');
+            if (msg) {
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+            if (err) {
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        });
+    </script>
+</body>
+</html>
